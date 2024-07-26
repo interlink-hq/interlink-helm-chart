@@ -2,7 +2,7 @@
 
 ## Maintainers
 
-Full Name \<email\>
+Diego Ciangottini \<dciangot@proton.me\>
 
 ## Contributors
 
