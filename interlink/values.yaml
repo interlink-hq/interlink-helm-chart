@@ -13,7 +13,7 @@ interlink:
   port: 5000
 
 virtualNode:
-  CPUs: 100
+  CPUs: 1000
   MemGiB: 1600
   Pods: 100
 
