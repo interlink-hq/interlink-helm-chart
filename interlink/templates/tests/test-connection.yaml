@@ -10,6 +10,8 @@ spec:
   containers:
     - name: wget
       image: busybox
-      command: ['wget']
-      args: ['{{ include "interlink.fullname" . }}:{{ .Values.service.port }}']
+      command: ['echo']
+      args: ['ciao']
+      # command: ['wget']
+      # args: ['{{ include "interlink.fullname" . }}:{{ .Values.service.port }}']
   restartPolicy: Never
