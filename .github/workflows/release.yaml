@@ -22,6 +22,7 @@ jobs:
         run: |
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          pip3 install chartpress
 
       - name: Install Helm
         uses: azure/setup-helm@v4
@@ -32,5 +33,6 @@ jobs:
         uses: helm/chart-releaser-action@v1.6.0
         with:
           charts_dir: ./ 
+          version: $GITHUB_REF_NAME 
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
