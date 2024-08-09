@@ -12,6 +12,9 @@ jobs:
     permissions:
       contents: write
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -23,15 +26,10 @@ jobs:
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
-      - name: Install Helm
-        uses: azure/setup-helm@v4
-        env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-
       - name: Run chart-releaser
-        uses: helm/chart-releaser-action@v1.6.0
+        uses: bitdeps/helm-oci-charts-releaser@v0.1.0
         with:
-          charts_dir: ./ 
-          version: $GITHUB_REF_NAME 
-        env:
-          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+            oci_registry: ghcr.io/username
+            oci_username: username
+            oci_password: ${{ secrets.GITHUB_TOKEN }}
+            github_token: ${{ secrets.GITHUB_TOKEN }}
