@@ -30,6 +30,5 @@ jobs:
             oci_registry: ghcr.io/intertwin-eu
             oci_username: dciangot
             charts_dir: ./
-            version: ${{ github.ref_name }} 
             oci_password: ${{ secrets.GITHUB_TOKEN }}
             github_token: ${{ secrets.GITHUB_TOKEN }}
