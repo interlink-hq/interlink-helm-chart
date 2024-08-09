@@ -2,7 +2,7 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-nodeName: test-virtual-node
+nodeName: virtual-node
 
 deployment:
   image: ghcr.io/intertwin-eu/interlink/virtual-kubelet-inttw:latest 
