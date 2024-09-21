@@ -18,6 +18,20 @@ spec:
       automountServiceAccountToken: true
       serviceAccountName: {{ .Values.deployment.name }} 
       containers:
+      {{- if .Values.interlink.socket }}
+      - name: interlink
+        image: "ghcr.io/intertwin-eu/interlink/interlink"
+        imagePullPolicy: Always
+        env:
+          - name: INTERLINKCONFIGPATH
+            value: "/etc/interlink/InterLinkConfig.yaml"
+        volumeMounts:
+          - name: il-config
+            mountPath: /etc/interlink/InterLinkConfig.yaml
+            subPath: InterLinkConfig.yaml
+          - name: sockets
+            mountPath: /var/run/
+      {{- end }}
       - name: inttw-vk
         image: {{ .Values.deployment.image }} 
         imagePullPolicy: Always
@@ -35,13 +49,14 @@ spec:
         - name: VKTOKENFILE
           value: "/opt/interlink/token"
         volumeMounts:
+        - name: sockets 
+          mountPath: /var/run/
         - name: config
           mountPath: /etc/interlink/InterLinkConfig.yaml
           subPath: InterLinkConfig.yaml
         - name: token
           mountPath: /opt/interlink
-      - name: jaeger
-        image: jaegertracing/all-in-one:1.51
+      {{- if .Values.interlink.socket }}
       - name: refresh-token
         image: ghcr.io/intertwin-eu/virtual-kubelet-inttw-refresh:latest
         imagePullPolicy: Always
@@ -72,6 +87,7 @@ spec:
         volumeMounts:
         - name: token
           mountPath: /opt/interlink
+      {{- end }}
       volumes:
       - name: config
         configMap:
@@ -80,3 +96,10 @@ spec:
         hostPath:
           path: /tmp
           type: Directory
+      {{- if .Values.interlink.socket }}
+      - name: il-config
+        configMap:
+          name: interlink-config
+      - name: sockets
+        emptyDir: {}  
+      {{- end }}

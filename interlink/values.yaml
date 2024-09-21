@@ -4,19 +4,34 @@
 
 nodeName: virtual-node
 
-deployment:
+interlink:
   image: ghcr.io/intertwin-eu/interlink/virtual-kubelet-inttw:latest 
   name: default-vk
-
-interlink:
-  URL: http://localhost
-  port: 5000
+  enabled: false
+  socket: null 
+  # if socket is specified, the following fields are ignored
+  address: http://localhost
+  port: 4000
 
 virtualNode:
+  image: ghcr.io/intertwin-eu/interlink/virtual-kubelet-inttw:latest 
+  name: default-vk
   CPUs: 1000
   MemGiB: 1600
   Pods: 100
 
+plugin:
+  address: ""  
+  port: 3000 
+  socket: null
+
+ssh_bastion:
+  clientKeys:
+    priv: ""
+    pub: ""
+  port: 31022
+    
+# if interlink.socket is specified, the following fields are ignored
 OAUTH:
   TokenURL: DUMMY
   ClientID: DUMMY

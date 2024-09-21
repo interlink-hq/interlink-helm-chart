@@ -5,14 +5,32 @@ metadata:
   namespace: {{ .Release.Namespace }}
 data:
   InterLinkConfig.yaml: |
-    InterlinkAddress: {{ .Values.interlink.URL }}
-    InterlinkPort: {{ .Values.interlink.port }}
+    InterlinkAddress: {{ .Values.interlink.address}}
+    InterlinkPort: {{ if .Values.interlink.socket }}-1{{ else }}{{ .Values.interlink.port }}{{ end }}
     ExportPodData: true
     VerboseLogging: true
     ErrorsOnlyLogging: false
     ServiceAccount: "{{ .Values.nodeName }}"
-    Namespace: ""
-    VKTokenFile: /opt/interlink/token 
+    Namespace: "{{ .Release.Namespace }}"
+    VKTokenFile: {{ if .Values.interlink.socket }}/dev/null{{ else }}/opt/interlink/token{{ end }}
     CPU: "{{ .Values.virtualNode.CPUs }}"
     Memory: "{{ .Values.virtualNode.MemGiB }}GiB"
     Pods: "{{ .Values.virtualNode.Pods }}"
+---
+{{- if .Values.interlink.socket }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "interlink-config"
+  namespace: interlink 
+data:
+  InterLinkConfig.yaml: |
+    InterlinkAddress: "unix:///var/run/interlink.socket"
+    SidecarURL: "http://plugin"
+    SidecarPort: "4000"
+    VerboseLogging: true
+    ErrorsOnlyLogging: false
+    ExportPodData: true
+    DataRootFolder: "~/.interlink"
+{{- end }}
+
