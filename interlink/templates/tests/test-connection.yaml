@@ -7,11 +7,46 @@ metadata:
   annotations:
     "helm.sh/hook": test
 spec:
+  serviceAccountName: {{ .Release.Name }}-test
   containers:
-    - name: wget
-      image: busybox
-      command: ['echo']
-      args: ['ciao']
-      # command: ['wget']
-      # args: ['{{ include "interlink.fullname" . }}:{{ .Values.service.port }}']
+    - name: kubectl
+      image: bitnami/kubectl
+      command: ['sh', '-c']
+      args:
+        - >
+          if kubectl get nodes {{ .Values.nodeName }} -o jsonpath='{.status.conditions[?(@.type=="Ready")].status}' | grep -q "True"; then
+            echo "Node {{ .Values.nodeName }} is ready"
+          else
+            echo "Node {{ .Values.nodeName }} is not ready"
+          fi
   restartPolicy: Never
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ .Release.Name }}-test 
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: node-reader
+rules:
+- apiGroups: [""]
+  resources: ["nodes"]
+  verbs: ["get", "list"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: read-nodes
+subjects:
+- kind: ServiceAccount
+  name: {{ .Release.Name }}-test 
+  namespace: {{ .Release.Namespace }} 
+roleRef:
+  kind: Role
+  name: node-reader
+  apiGroup: rbac.authorization.k8s.io
