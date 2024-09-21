@@ -6,7 +6,6 @@ nodeName: virtual-node
 
 interlink:
   image: ghcr.io/intertwin-eu/interlink/virtual-kubelet-inttw:latest 
-  name: default-vk
   enabled: false
   socket: null 
   # if socket is specified, the following fields are ignored
@@ -14,25 +13,30 @@ interlink:
   port: 4000
 
 virtualNode:
-  image: ghcr.io/intertwin-eu/interlink/virtual-kubelet-inttw:latest 
-  name: default-vk
+  image: ghcr.io/intertwin-eu/interlink/interlink:latest 
   CPUs: 1000
   MemGiB: 1600
   Pods: 100
+  HTTPProxies:
+    HTTP: null
+    HTTPs: null
 
 plugin:
   address: ""  
   port: 3000 
   socket: null
 
-ssh_bastion:
+sshBastion:
+  enabled: false
+  image: ghcr.io/intertwin-eu/interlink/ssh-server:latest
   clientKeys:
-    priv: ""
-    pub: ""
+    authorizedKey: ""
+    keysURL: ""
   port: 31022
     
 # if interlink.socket is specified, the following fields are ignored
 OAUTH:
+  image: ghcr.io/intertwin-eu/interlink/virtual-kubelet-inttw-refresh:latest
   TokenURL: DUMMY
   ClientID: DUMMY
   ClientSecret: DUMMY

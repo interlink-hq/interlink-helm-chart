@@ -15,15 +15,26 @@ helm install --create-namespace -n interlink virtual-node oci://ghcr.io/intertwi
 ### Edge-node service
 
 In this mode you will deploy:
+- virtual kubelet and token refresher
+- plugin and interlink API server + OAuth2_proxy on the remote side
 
 __It is recommended to start deploy the remote components first! The release will only succeed upon virtual node being in Ready status. This can occur if all the chain is in place.__
 
+### Edge-node with socket
+
+In this mode you will deploy:
+- interlink and virtual kubelet + ssh service 
+- only plugin on the remote side
+
+__It is recommended to start deploy the remote components first! The release will only succeed upon virtual node being in Ready status. This can occur if all the chain is in place.__
 
 ### In-cluster mode
 
 In this mode you will deploy:
+- Everything deploy in cluster with socket communication
+    - Virtual kubelet, interlink API server and plugin
+- Remote side is the container manager API and point
 
-__It is recommended to start deploy the remote components first! The release will only succeed upon virtual node being in Ready status. This can occur if all the chain is in place.__
 
 ## F.A.Q.
 

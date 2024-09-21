@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.deployment.name}} 
+  name: {{ .Values.virtualNode.name}} 
   namespace: {{ .Release.Namespace}} 
   labels:
     nodeName: {{ .Values.nodeName }}
@@ -16,11 +16,11 @@ spec:
         nodeName: {{ .Values.nodeName }} 
     spec:
       automountServiceAccountToken: true
-      serviceAccountName: {{ .Values.deployment.name }} 
+      serviceAccountName: {{ .Values.virtualNode.name }} 
       containers:
       {{- if .Values.interlink.socket }}
       - name: interlink
-        image: "ghcr.io/intertwin-eu/interlink/interlink"
+        image: "{{ .Values.virtualNode.image }}"
         imagePullPolicy: Always
         env:
           - name: INTERLINKCONFIGPATH
@@ -33,7 +33,7 @@ spec:
             mountPath: /var/run/
       {{- end }}
       - name: inttw-vk
-        image: {{ .Values.deployment.image }} 
+        image: {{ .Values.virtualNode.image }} 
         imagePullPolicy: Always
         env:
         - name: NODENAME
@@ -48,6 +48,14 @@ spec:
           value: "/etc/interlink/InterLinkConfig.yaml"
         - name: VKTOKENFILE
           value: "/opt/interlink/token"
+        {{- if .Values.virtualNode.HTTPProxies.HTTP }}
+        - name: HTTP_PROXY
+          value: {{ .Values.virtualNode.HTTPProxies.HTTP }}
+        {{- end }}
+        {{- if .Values.virtualNode.HTTPProxies.HTTPs }}
+        - name: HTTPS_PROXY
+          value: {{ .Values.virtualNode.HTTPProxies.HTTPs }}
+        {{- end }}
         volumeMounts:
         - name: sockets 
           mountPath: /var/run/
@@ -58,7 +66,7 @@ spec:
           mountPath: /opt/interlink
       {{- if .Values.interlink.socket }}
       - name: refresh-token
-        image: ghcr.io/intertwin-eu/virtual-kubelet-inttw-refresh:latest
+        image: "{{ .Values.OAUTH.image }}"
         imagePullPolicy: Always
         env:
         - name: IAM_TOKEN_ENDPOINT 
@@ -88,6 +96,23 @@ spec:
         - name: token
           mountPath: /opt/interlink
       {{- end }}
+      {{- if .Values.sshBastion.enabled }}
+      - name: ssh-bastion
+        image: "{{ .Values.sshBastion.image }}"
+        env:
+        - name: PUBLIC_KEY
+          value: {{.Values.sshBastion.clientKeys.authorizedKey }}
+        - name: USER_NAME
+          value: root
+        - name: PUBLIC_KEY_URL
+          value: {{.Values.sshBastion.clientKeys.keysURL }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 22
+        volumeMounts:
+        - name: sockets
+          mountPath: /var/run/
+      {{- end }}
       volumes:
       - name: config
         configMap:
@@ -103,3 +128,18 @@ spec:
       - name: sockets
         emptyDir: {}  
       {{- end }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ssh-bastion-{{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  type: NodePort
+  ports:
+  - port: 22
+    targetPort: 22
+    nodePort: {{ .Values.sshBastion.port }}
+  selector:
+    app: {{ .Values.virtualNode.name }}
