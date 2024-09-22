@@ -1,0 +1,17 @@
+
+nodeName: interlink-with-socket
+
+interlink:
+  enabled: true
+  socket: unix:///var/run/interlink.socket
+
+plugin:
+  socket: unix:///var/run/plugin.socket 
+
+sshBastion:
+  enabled: true
+  clientKeys:
+    authorizedKey: |
+      ssh-rsa A..........MG0yNvbLfJT+37pw==
+  port: 31021
+

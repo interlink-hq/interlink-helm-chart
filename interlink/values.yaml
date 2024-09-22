@@ -22,13 +22,14 @@ virtualNode:
     HTTPs: null
 
 plugin:
+  enabled: false
   address: ""  
   port: 3000 
   socket: null
 
 sshBastion:
   enabled: false
-  image: ghcr.io/intertwin-eu/interlink/ssh-server:latest
+  image: lscr.io/linuxserver/openssh-server:latest 
   clientKeys:
     authorizedKey: ""
     keysURL: ""
