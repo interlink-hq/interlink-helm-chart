@@ -23,6 +23,11 @@ virtualNode:
 
 plugin:
   enabled: false
+  image: "" 
+  commands: [] 
+  args: []
+  envs: []
+  config: ""
   address: ""  
   port: 3000 
   socket: null

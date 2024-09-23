@@ -1,12 +1,8 @@
-
 nodeName: interlink-with-socket
 
 interlink:
   enabled: true
   socket: unix:///var/run/interlink.socket
-
-plugin:
-  socket: unix:///var/run/plugin.socket 
 
 sshBastion:
   enabled: true

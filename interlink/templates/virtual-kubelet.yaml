@@ -18,6 +18,22 @@ spec:
       automountServiceAccountToken: true
       serviceAccountName: {{ .Values.virtualNode.name }} 
       containers:
+      {{- if .Values.plugin.enabled }}
+      - name: plugin 
+        image: "{{ .Values.plugin.image }}"
+        imagePullPolicy: Always
+        commands: {{ .Values.plugin.commands }} 
+        args: {{ .Values.plugin.args }} 
+        env:
+          - name: INTERLINKCONFIGPATH
+            value: "/etc/interlink/plugin.yaml"
+        volumeMounts:
+          - name: il-config
+            mountPath: /etc/interlink/plugin.yaml
+            subPath: plugin.yaml
+          - name: sockets
+            mountPath: /var/run/
+      {{- end }}
       {{- if .Values.interlink.socket }}
       - name: interlink
         image: "{{ .Values.virtualNode.image }}"
@@ -32,7 +48,7 @@ spec:
           - name: sockets
             mountPath: /var/run/
       {{- end }}
-      - name: inttw-vk
+      - name: vk
         image: {{ .Values.virtualNode.image }} 
         imagePullPolicy: Always
         env:
@@ -57,14 +73,15 @@ spec:
           value: {{ .Values.virtualNode.HTTPProxies.HTTPs }}
         {{- end }}
         volumeMounts:
-        - name: sockets 
-          mountPath: /var/run/
         - name: config
           mountPath: /etc/interlink/InterLinkConfig.yaml
           subPath: InterLinkConfig.yaml
         - name: token
           mountPath: /opt/interlink
       {{- if .Values.interlink.socket }}
+        - name: sockets
+          mountPath: /var/run/
+      {{- else }}
       - name: refresh-token
         image: "{{ .Values.OAUTH.image }}"
         imagePullPolicy: Always
@@ -116,7 +133,7 @@ spec:
       volumes:
       - name: config
         configMap:
-          name: virtual-kubelet-config
+          name: {{ .Values.nodeName }}-virtual-kubelet-config
       - name: token
         hostPath:
           path: /tmp
@@ -124,7 +141,7 @@ spec:
       {{- if .Values.interlink.socket }}
       - name: il-config
         configMap:
-          name: interlink-config
+          name: {{ .Values.nodeName }}-interlink-config
       - name: sockets
         emptyDir: {}  
       {{- end }}
