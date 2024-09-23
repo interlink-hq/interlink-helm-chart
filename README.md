@@ -12,6 +12,8 @@ Work in progress!
 helm install --create-namespace -n interlink virtual-node oci://ghcr.io/intertwin-eu/interlink-helm-chart/interlink --values values.yaml
 ```
 
+To deploy the following scenarios, please refer to the official [Cookbook](https://intertwin-eu.github.io/interLink/docs/cookbook)
+
 ### Edge-node service
 
 In this mode you will deploy:
@@ -38,4 +40,4 @@ In this mode you will deploy:
 
 ## F.A.Q.
 
-- Conditions for chart to be ready: 
+- Conditions for chart to be ready: all the components should be online, remote ones included. 

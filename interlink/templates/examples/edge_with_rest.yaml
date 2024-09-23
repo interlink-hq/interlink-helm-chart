@@ -11,3 +11,12 @@ virtualNode:
   HTTPProxies:
     HTTP: null
     HTTPs: null
+
+OAUTH:
+  image: ghcr.io/intertwin-eu/interlink/virtual-kubelet-inttw-refresh:latest
+  TokenURL: DUMMY
+  ClientID: DUMMY
+  ClientSecret: DUMMY
+  RefreshToken: DUMMY
+  GrantType: authorization_code
+  Audience: DUMMY

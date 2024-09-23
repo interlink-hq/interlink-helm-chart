@@ -47,5 +47,6 @@ OAUTH:
   ClientID: DUMMY
   ClientSecret: DUMMY
   RefreshToken: DUMMY
+  GrantType: authorization_code
   Audience: DUMMY
 
