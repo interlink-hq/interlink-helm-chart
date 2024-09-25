@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.virtualNode.name}} 
+  name: {{ .Values.nodeName }}-node 
   namespace: {{ .Release.Namespace}} 
   labels:
     nodeName: {{ .Values.nodeName }}
