@@ -5,7 +5,7 @@
 nodeName: virtual-node
 
 interlink:
-  image: ghcr.io/intertwin-eu/interlink/virtual-kubelet-inttw:latest 
+  image: ghcr.io/intertwin-eu/interlink/interlink:latest 
   enabled: false
   socket: null 
   # if socket is specified, the following fields are ignored
@@ -13,7 +13,7 @@ interlink:
   port: 4000
 
 virtualNode:
-  image: ghcr.io/intertwin-eu/interlink/interlink:latest 
+  image: ghcr.io/intertwin-eu/interlink/virtual-kubelet-inttw:latest 
   CPUs: 1000
   MemGiB: 1600
   Pods: 100
@@ -36,7 +36,7 @@ sshBastion:
   enabled: false
   image: lscr.io/linuxserver/openssh-server:latest 
   clientKeys:
-    authorizedKey: ""
+    authorizedKeys: ""
     keysURL: ""
   port: 31022
     

@@ -2,12 +2,14 @@ nodeName: interlink-with-socket
 
 interlink:
   enabled: true
-  socket: unix:///var/run/interlink.socket
+  socket: unix:///var/run/interlink.sock
+
+plugin:
+  address: http://localhost
 
 sshBastion:
   enabled: true
   clientKeys:
-    authorizedKey: |
-      ssh-rsa A..........MG0yNvbLfJT+37pw==
+    authorizedKeys: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINtPkb83vg98wARi/VQQcHqnvkLape6GpFjsRoznO0hg dciangot@host-10-25-128-35.wired.local"
   port: 31021
 

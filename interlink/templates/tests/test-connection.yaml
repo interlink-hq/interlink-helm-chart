@@ -31,7 +31,7 @@ metadata:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: node-reader
+  name: {{ .Release.Name }}-node-reader
 rules:
 - apiGroups: [""]
   resources: ["nodes"]
@@ -41,12 +41,12 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: read-nodes
+  name: {{ .Release.Name }}-read-nodes
 subjects:
 - kind: ServiceAccount
   name: {{ .Release.Name }}-test 
   namespace: {{ .Release.Namespace }} 
 roleRef:
   kind: Role
-  name: node-reader
+  name: {{ .Release.Name }}-node-reader
   apiGroup: rbac.authorization.k8s.io
