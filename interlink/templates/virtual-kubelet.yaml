@@ -4,19 +4,19 @@ metadata:
   name: {{ .Values.nodeName }}-node 
   namespace: {{ .Release.Namespace}} 
   labels:
-    nodeName: {{ .Values.nodeName }}
+    app: {{ .Values.nodeName }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      nodeName: {{ .Values.nodeName }}
+      app: {{ .Values.nodeName }}
   template:
     metadata:
       labels:
-        nodeName: {{ .Values.nodeName }} 
+        app: {{ .Values.nodeName }} 
     spec:
       automountServiceAccountToken: true
-      serviceAccountName: {{ .Values.virtualNode.name }} 
+      serviceAccountName: {{ .Values.nodeName }} 
       containers:
       {{- if .Values.plugin.enabled }}
       - name: plugin 
@@ -28,15 +28,14 @@ spec:
           - name: INTERLINKCONFIGPATH
             value: "/etc/interlink/plugin.yaml"
         volumeMounts:
-          - name: il-config
-            mountPath: /etc/interlink/plugin.yaml
+          - name: il-config mountPath: /etc/interlink/plugin.yaml
             subPath: plugin.yaml
           - name: sockets
             mountPath: /var/run/
       {{- end }}
       {{- if .Values.interlink.socket }}
       - name: interlink
-        image: "{{ .Values.virtualNode.image }}"
+        image: "{{ .Values.interlink.image }}"
         imagePullPolicy: Always
         env:
           - name: INTERLINKCONFIGPATH
@@ -120,21 +119,40 @@ spec:
       {{- if .Values.sshBastion.enabled }}
       - name: ssh-bastion
         image: "{{ .Values.sshBastion.image }}"
+        ports:
+        - containerPort: 2222
         env:
-        - name: PUBLIC_KEY
-          value: {{.Values.sshBastion.clientKeys.authorizedKey }}
+        - name: PUBLIC_KEY_FILE
+          value: /opt/ssh/authorized_keys 
         - name: USER_NAME
-          value: root
+          value: interlink 
         - name: PUBLIC_KEY_URL
           value: {{.Values.sshBastion.clientKeys.keysURL }}
+        - name: DOCKER_MODS
+          value: linuxserver/mods:openssh-server-ssh-tunnel
+        - name: SHELL_NOLOGIN
+          value: "true"
         imagePullPolicy: Always
         ports:
         - containerPort: 22
         volumeMounts:
         - name: sockets
-          mountPath: /var/run/
+          mountPath: /config/sockets
+        - name: ssh-keys
+          mountPath: /opt/ssh/
+        # - name: sshd-config
+        #   mountPath: /etc/ssh/sshd_config
+        #   subPath: sshd_config
       {{- end }}
       volumes:
+      {{- if .Values.sshBastion.enabled }}
+      - name: ssh-keys
+        secret:
+          secretName: {{.Values.nodeName }}-ssh-keys 
+      - name: sshd-config
+        configMap:
+          name: "{{ .Values.nodeName }}-sshd-config"
+      {{- end }}
       - name: config
         configMap:
           name: {{ .Values.nodeName }}-virtual-kubelet-config
@@ -149,7 +167,6 @@ spec:
       - name: sockets
         emptyDir: {}  
       {{- end }}
-
 ---
 apiVersion: v1
 kind: Service
@@ -159,8 +176,33 @@ metadata:
 spec:
   type: NodePort
   ports:
-  - port: 22
-    targetPort: 22
+  - port: 2222 
     nodePort: {{ .Values.sshBastion.port }}
   selector:
-    app: {{ .Values.virtualNode.name }}
+    app: {{ .Values.nodeName }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{.Values.nodeName }}-ssh-keys
+  namespace: {{ .Release.Namespace }}
+type: Opaque
+data:
+  authorized_keys: {{ .Values.sshBastion.clientKeys.authorizedKeys | b64enc }}
+---
+
+{{- if .Values.sshBastion.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "{{ .Values.nodeName }}-sshd-config"
+  namespace: {{ .Release.Namespace }}
+data:
+  sshd_config: |
+    #PermitOpen /config/sockets/plugin.sock
+    #PermitOpen /config/sockets/interlink.sock
+    AllowTcpForwarding yes
+
+{{- end }}
+
+---

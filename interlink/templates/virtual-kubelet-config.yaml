@@ -5,7 +5,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
 data:
   InterLinkConfig.yaml: |
-    InterlinkAddress: {{ .Values.interlink.address}}
+    InterlinkURL: "{{ if .Values.interlink.socket }}{{ .Values.interlink.socket }}{{ else }}{{ .Values.interlink.address }}{{ end }}"
     InterlinkPort: {{ if .Values.interlink.socket }}-1{{ else }}{{ .Values.interlink.port }}{{ end }}
     ExportPodData: true
     VerboseLogging: true
@@ -14,7 +14,7 @@ data:
     Namespace: "{{ .Release.Namespace }}"
     VKTokenFile: {{ if .Values.interlink.socket }}/dev/null{{ else }}/opt/interlink/token{{ end }}
     CPU: "{{ .Values.virtualNode.CPUs }}"
-    Memory: "{{ .Values.virtualNode.MemGiB }}GiB"
+    Memory: "{{ .Values.virtualNode.MemGiB }}Gi"
     Pods: "{{ .Values.virtualNode.Pods }}"
 ---
 {{- if .Values.interlink.socket }}
