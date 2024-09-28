@@ -10,6 +10,6 @@ plugin:
 sshBastion:
   enabled: true
   clientKeys:
-    authorizedKeys: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINtPkb83vg98wARi/VQQcHqnvkLape6GpFjsRoznO0hg dciangot@host-10-25-128-35.wired.local"
+    authorizedKeys: "ssh-ed25519 AAAAC3NzaC1lZ....."
   port: 31021
 
