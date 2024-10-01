@@ -169,6 +169,17 @@ spec:
       {{- end }}
 ---
 apiVersion: v1
+kind: Secret
+metadata:
+  name: {{.Values.nodeName }}-ssh-keys
+  namespace: {{ .Release.Namespace }}
+type: Opaque
+data:
+  authorized_keys: {{ .Values.sshBastion.clientKeys.authorizedKeys | b64enc }}
+---
+
+{{- if .Values.sshBastion.enabled }}
+apiVersion: v1
 kind: Service
 metadata:
   name: ssh-bastion-{{ .Release.Name }}
@@ -180,18 +191,9 @@ spec:
     nodePort: {{ .Values.sshBastion.port }}
   selector:
     app: {{ .Values.nodeName }}
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: {{.Values.nodeName }}-ssh-keys
-  namespace: {{ .Release.Namespace }}
-type: Opaque
-data:
-  authorized_keys: {{ .Values.sshBastion.clientKeys.authorizedKeys | b64enc }}
+
 ---
 
-{{- if .Values.sshBastion.enabled }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
