@@ -16,6 +16,10 @@ data:
     CPU: "{{ .Values.virtualNode.CPUs }}"
     Memory: "{{ .Values.virtualNode.MemGiB }}Gi"
     Pods: "{{ .Values.virtualNode.Pods }}"
+    HTTP:
+      Insecure: {{ .Values.virtualNode.HTTP.Insecure }}
+    KubeletHTTP:
+      Insecure: {{ .Values.virtualNode.KubeletHTTP.Insecure }}
 ---
 {{- if .Values.interlink.socket }}
 apiVersion: v1

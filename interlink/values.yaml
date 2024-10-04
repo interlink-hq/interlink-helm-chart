@@ -20,6 +20,10 @@ virtualNode:
   HTTPProxies:
     HTTP: null
     HTTPs: null
+  HTTP:
+    Insecure: false
+  KubeletHTTP:
+    Insecure: true
 
 plugin:
   enabled: false
