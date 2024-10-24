@@ -45,7 +45,7 @@ helm install gateway interlink-repo/tcp-tunnel/charts/gateway \
 
 The command above deploys a Gateway pod that listens for SSH connections on port 2222, moreover a NodePort is created to expose a public port 30222 to reach the SSH daemon.
 The Bastion pod will connect to public port 30222 to create a Reverse SSH Tunnel.
-See [values.yaml](src/infr/charts/tcp-tunnel/charts/gateway/values.yaml) for all parameters and default values.
+See [values.yaml](./charts/gateway/values.yaml) for all parameters and default values.
 
 For development purposes, you can specify `tunnel.service.*` parameters to additionally deploy a NodePort `sourceNodePort` that forwards traffic to Gateway port `sourcePort`: assuming a reverse tunnel from `sourcePort` has been created, this setup can be used to send external TCP traffic to the tunnel through `<node-public-ip>:sourceNodePort`:
 ```sh
