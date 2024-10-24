@@ -1,0 +1,7 @@
+apiVersion: v2
+name: bastion
+description: Bastion host of the TCP Tunnel
+
+type: application
+version: 0.1.0
+appVersion: "0.1.0"

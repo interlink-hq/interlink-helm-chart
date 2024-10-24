@@ -1,0 +1,7 @@
+apiVersion: v2
+name: gateway
+description: Gateway host of the TCP Tunnel
+
+type: application
+version: 0.1.0
+appVersion: "0.1.0"

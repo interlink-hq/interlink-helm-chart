@@ -1,0 +1,25 @@
+image:
+  # https://github.com/final-gene/docker-hub-openssh
+  repository: docker.io/finalgene/openssh
+  tag: latest
+  pullPolicy: IfNotPresent
+tunnel:
+  gateway:
+    host:
+    ssh:
+      port: 30222
+      privateKey:
+      userName: interlink-user
+  service:
+    gatewayPort: 8181
+    targetHost: 
+    targetPort: 80
+resources:
+  requests:
+    cpu: 100m
+    memory: 16Mi
+    # ephemeral-storage: 128Mi
+  limits:
+    cpu: 200m
+    memory: 32Mi
+    # ephemeral-storage: 256Mi

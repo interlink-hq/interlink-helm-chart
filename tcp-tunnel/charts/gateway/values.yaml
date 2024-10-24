@@ -1,0 +1,26 @@
+image:
+  # https://hub.docker.com/r/linuxserver/openssh-server
+  repository: docker.io/mginfn/openssh-server
+  tag: latest
+  pullPolicy: IfNotPresent
+ssh:
+  port: 2222
+  publicKey:
+  userName: interlink-user
+service:
+  port: 30222  
+  type: NodePort
+resources:
+  requests:
+    cpu: 100m
+    memory: 16Mi
+    # ephemeral-storage: 128Mi
+  limits:
+    cpu: 200m
+    memory: 32Mi
+    # ephemeral-storage: 256Mi
+# tunnel:
+#   service:
+#     sourcePort: 8181
+#     sourceNodePort: 30181
+#     type: NodePort

@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "bastion.fullname" . }}
+  labels:
+    {{- include "bastion.labels" . | nindent 4 }}
+    interlink/role: {{ include "bastion.name" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "bastion.selectorLabels" . | nindent 6 }}
+      interlink/role: {{ include "bastion.name" . }}
+  template:
+    metadata:
+      labels:
+        {{- include "bastion.labels" . | nindent 8 }}
+        interlink/role: {{ include "bastion.name" . }}
+    spec:
+      containers:
+        - name: openssh-client
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["/bin/sh", "-c"]
+          args:
+          - >-
+            eval "$(ssh-agent -s)" &&
+            echo "$SSH_PRIVATE_KEY" | ssh-add - &&
+            ssh -N -R 0.0.0.0:${GATEWAY_TUNNEL_PORT}:${SERVICE_HOST}:${SERVICE_PORT} ${GATEWAY_USER}@${GATEWAY_HOST} -p ${GATEWAY_PORT} -v
+            # - ssh -N -R 0.0.0.0:8181:your-service.your-namespace.svc.cluster.local:80 interlink-user@131.154.98.96 -p 30222 -v
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          env:
+            - name: SSH_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "bastion.fullname" . }}
+                  key: SSH_PRIVATE_KEY
+          envFrom:
+            - configMapRef:
+                name: {{ include "bastion.fullname" . }}
