@@ -5,10 +5,13 @@
 nodeName: virtual-node
 
 interlink:
-  image: ghcr.io/intertwin-eu/interlink/interlink:latest 
+  image: ghcr.io/intertwin-eu/interlink/interlink:latest
   enabled: false
-  socket: null 
-  # if socket is specified, the following fields are ignored
+  exportPodData: false
+  dataRootVolume: ""
+  # unix socket in /var/run
+  socket: null
+  # if socket is specified, the address/port are ignored
   address: http://localhost
   port: 4000
 
@@ -30,11 +33,15 @@ plugin:
   image: "" 
   commands: [] 
   args: []
-  envs: []
+  # content of the "config" will be mounted as /etc/interlink/plugin.yaml
   config: ""
-  address: ""  
-  port: 3000 
+  envs: []
+    # - name: SLURMCONFIGPATH
+    #   value: /etc/interlink/plugin.yaml
   socket: null
+  # if socket is specified, the address/port are ignored
+  address: ""
+  port: 3000
 
 sshBastion:
   enabled: false
@@ -44,8 +51,9 @@ sshBastion:
     keysURL: ""
   port: 31022
     
-# if interlink.socket is specified, the following fields are ignored
+# disable OAUTH when using sockets for communication in the in-cluster mode
 OAUTH:
+  enabled: false
   image: ghcr.io/intertwin-eu/interlink/virtual-kubelet-inttw-refresh:latest
   TokenURL: DUMMY
   ClientID: DUMMY
@@ -54,3 +62,9 @@ OAUTH:
   GrantType: authorization_code
   Audience: DUMMY
 
+# define extra volumes (e.g. for DataRootVolume)
+extraVolumes: []
+  # - name: data-root
+  #   hostPath:
+  #     path: /scratch/interlink/
+  #     type: DirectoryOrCreate

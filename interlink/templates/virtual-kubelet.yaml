@@ -13,27 +13,37 @@ spec:
   template:
     metadata:
       labels:
-        app: {{ .Values.nodeName }} 
+        app: {{ .Values.nodeName }}
     spec:
       automountServiceAccountToken: true
-      serviceAccountName: {{ .Values.nodeName }} 
+      serviceAccountName: {{ .Values.nodeName }}
       containers:
       {{- if .Values.plugin.enabled }}
       - name: plugin 
         image: "{{ .Values.plugin.image }}"
         imagePullPolicy: Always
-        commands: {{ .Values.plugin.commands }} 
-        args: {{ .Values.plugin.args }} 
+        {{- with .Values.plugin.commands }}
+        commands:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        {{- with .Values.plugin.args }}
+        args:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        {{- with .Values.plugin.envs }}
         env:
-          - name: INTERLINKCONFIGPATH
-            value: "/etc/interlink/plugin.yaml"
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
         volumeMounts:
-          - name: il-config mountPath: /etc/interlink/plugin.yaml
+          - name: plugin-config
+            mountPath: /etc/interlink/plugin.yaml
             subPath: plugin.yaml
+          {{- if .Values.plugin.socket }}
           - name: sockets
             mountPath: /var/run/
+          {{- end }}
       {{- end }}
-      {{- if .Values.interlink.socket }}
+      {{- if .Values.interlink.enabled }}
       - name: interlink
         image: "{{ .Values.interlink.image }}"
         imagePullPolicy: Always
@@ -44,15 +54,21 @@ spec:
           - name: il-config
             mountPath: /etc/interlink/InterLinkConfig.yaml
             subPath: InterLinkConfig.yaml
+          {{- if or .Values.interlink.socket .Values.plugin.socket }}
           - name: sockets
             mountPath: /var/run/
+          {{- end }}
+          {{- if .Values.interlink.exportPodData }}
+          - name: {{ .Values.interlink.dataRootVolume }}
+            mountPath: /data/interlink
+          {{- end }}
       {{- end }}
       - name: vk
-        image: {{ .Values.virtualNode.image }} 
+        image: {{ .Values.virtualNode.image }}
         imagePullPolicy: Always
         env:
         - name: NODENAME
-          value: {{ .Values.nodeName }} 
+          value: {{ .Values.nodeName }}
         - name: KUBELET_PORT
           value: "10250"
         - name: POD_IP
@@ -61,8 +77,10 @@ spec:
               fieldPath: status.podIP
         - name: CONFIGPATH
           value: "/etc/interlink/InterLinkConfig.yaml"
+        {{- if .Values.OAUTH.enabled }}
         - name: VKTOKENFILE
           value: "/opt/interlink/token"
+        {{- end }}
         {{- if .Values.virtualNode.HTTPProxies.HTTP }}
         - name: HTTP_PROXY
           value: {{ .Values.virtualNode.HTTPProxies.HTTP }}
@@ -75,12 +93,15 @@ spec:
         - name: config
           mountPath: /etc/interlink/InterLinkConfig.yaml
           subPath: InterLinkConfig.yaml
+        {{- if .Values.OAUTH.enabled }}
         - name: token
           mountPath: /opt/interlink
-      {{- if .Values.interlink.socket }}
+        {{- end }}
+        {{- if .Values.interlink.socket }}
         - name: sockets
           mountPath: /var/run/
-      {{- else }}
+        {{- end }}
+      {{- if .Values.OAUTH.enabled }}
       - name: refresh-token
         image: "{{ .Values.OAUTH.image }}"
         imagePullPolicy: Always
@@ -145,6 +166,12 @@ spec:
         #   subPath: sshd_config
       {{- end }}
       volumes:
+      - name: config
+        configMap:
+          name: {{ .Values.nodeName }}-virtual-kubelet-config
+      {{- with .Values.extraVolumes }}
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
       {{- if .Values.sshBastion.enabled }}
       - name: ssh-keys
         secret:
@@ -153,20 +180,28 @@ spec:
         configMap:
           name: "{{ .Values.nodeName }}-sshd-config"
       {{- end }}
-      - name: config
-        configMap:
-          name: {{ .Values.nodeName }}-virtual-kubelet-config
+      {{- if .Values.OAUTH.enabled }}
       - name: token
         hostPath:
           path: /tmp
           type: Directory
-      {{- if .Values.interlink.socket }}
+      {{- end }}
+      {{- if .Values.interlink.enabled }}
       - name: il-config
         configMap:
           name: {{ .Values.nodeName }}-interlink-config
-      - name: sockets
-        emptyDir: {}  
       {{- end }}
+      {{- if .Values.plugin.enabled }}
+      - name: plugin-config
+        configMap:
+          name: {{ .Values.nodeName }}-plugin-config
+      {{- end }}
+      {{- if or .Values.interlink.socket .Values.plugin.socket }}
+      - name: sockets
+        emptyDir: {}
+      {{- end }}
+
+{{- if .Values.sshBastion.enabled }}
 ---
 apiVersion: v1
 kind: Secret
@@ -176,9 +211,8 @@ metadata:
 type: Opaque
 data:
   authorized_keys: {{ .Values.sshBastion.clientKeys.authorizedKeys | b64enc }}
----
 
-{{- if .Values.sshBastion.enabled }}
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -193,7 +227,6 @@ spec:
     app: {{ .Values.nodeName }}
 
 ---
-
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -206,5 +239,3 @@ data:
     AllowTcpForwarding yes
 
 {{- end }}
-
----
