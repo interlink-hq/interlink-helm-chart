@@ -5,14 +5,19 @@ metadata:
   namespace: {{ .Release.Namespace }}
 data:
   InterLinkConfig.yaml: |
-    InterlinkURL: "{{ if .Values.interlink.socket }}{{ .Values.interlink.socket }}{{ else }}{{ .Values.interlink.address }}{{ end }}"
-    InterlinkPort: {{ if .Values.interlink.socket }}-1{{ else }}{{ .Values.interlink.port }}{{ end }}
-    ExportPodData: true
+    {{- if .Values.interlink.socket }}
+    InterlinkURL: {{ .Values.interlink.socket | quote }}
+    InterlinkPort: {{ printf "%s-1" .Values.interlink.socket | quote }}
+    {{- else }}
+    InterlinkURL: {{ .Values.interlink.address | quote }}
+    InterlinkPort: {{ .Values.interlink.port | quote }}
+    {{- end }}
+    ExportPodData: {{ .Values.interlink.exportPodData }}
     VerboseLogging: true
     ErrorsOnlyLogging: false
     ServiceAccount: "{{ .Values.nodeName }}"
     Namespace: "{{ .Release.Namespace }}"
-    VKTokenFile: {{ if .Values.interlink.socket }}/dev/null{{ else }}/opt/interlink/token{{ end }}
+    VKTokenFile: {{ .Values.OAUTH.enabled | ternary "/opt/interlink/token" "/dev/null" }}
     CPU: "{{ .Values.virtualNode.CPUs }}"
     Memory: "{{ .Values.virtualNode.MemGiB }}Gi"
     Pods: "{{ .Values.virtualNode.Pods }}"
@@ -21,7 +26,7 @@ data:
     KubeletHTTP:
       Insecure: {{ .Values.virtualNode.KubeletHTTP.Insecure }}
 ---
-{{- if .Values.interlink.socket }}
+{{- if .Values.interlink.enabled }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -29,13 +34,22 @@ metadata:
   namespace: {{ .Release.Namespace }}
 data:
   InterLinkConfig.yaml: |
-    InterlinkAddress: "{{ .Values.interlink.socket }}"
-    SidecarURL: "{{ if .Values.plugin.socket }}{{ .Values.plugin.socket }}{{ else }}{{ .Values.plugin.address }}{{ end }}"
-    SidecarPort: "{{ .Values.plugin.port }}"
+    {{- if .Values.interlink.socket }}
+    InterlinkAddress: {{ .Values.interlink.socket | quote }}
+    {{- else }}
+    InterlinkAddress: {{ .Values.interlink.address | quote }}
+    InterlinkPort: {{ .Values.interlink.port | quote }}
+    {{- end }}
+    {{- if .Values.plugin.socket }}
+    SidecarURL: {{ .Values.plugin.socket | quote }}
+    {{- else }}
+    SidecarURL: {{ .Values.plugin.address | quote }}
+    SidecarPort: {{ .Values.plugin.port | quote }}
+    {{- end }}
     VerboseLogging: true
     ErrorsOnlyLogging: false
-    ExportPodData: true
-    DataRootFolder: "~/.interlink"
+    ExportPodData: {{ .Values.interlink.exportPodData }}
+    DataRootFolder: /data/interlink
 {{- end }}
 ---
 {{- if .Values.plugin.enabled }}
