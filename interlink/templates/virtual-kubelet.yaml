@@ -182,9 +182,7 @@ spec:
       {{- end }}
       {{- if .Values.OAUTH.enabled }}
       - name: token
-        hostPath:
-          path: /tmp
-          type: Directory
+        emptyDir: {}
       {{- end }}
       {{- if .Values.interlink.enabled }}
       - name: il-config
