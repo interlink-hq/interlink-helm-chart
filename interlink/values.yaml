@@ -20,6 +20,7 @@ virtualNode:
   CPUs: 1000
   MemGiB: 1600
   Pods: 100
+  GPUs: 0
   HTTPProxies:
     HTTP: null
     HTTPs: null
@@ -49,6 +50,9 @@ sshBastion:
   clientKeys:
     authorizedKeys: ""
     keysURL: ""
+  hostKeys:
+    priv: ""
+    pub: ""
   port: 31022
     
 # disable OAUTH when using sockets for communication in the in-cluster mode

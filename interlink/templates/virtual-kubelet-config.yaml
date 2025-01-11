@@ -21,6 +21,7 @@ data:
     CPU: "{{ .Values.virtualNode.CPUs }}"
     Memory: "{{ .Values.virtualNode.MemGiB }}Gi"
     Pods: "{{ .Values.virtualNode.Pods }}"
+    nvidia.com/gpu: "{{ .Values.virtualNode.GPUs }}"
     HTTP:
       Insecure: {{ .Values.virtualNode.HTTP.Insecure }}
     KubeletHTTP:
@@ -48,7 +49,6 @@ data:
     {{- end }}
     VerboseLogging: true
     ErrorsOnlyLogging: false
-    ExportPodData: {{ .Values.interlink.exportPodData }}
     DataRootFolder: /data/interlink
 {{- end }}
 ---
