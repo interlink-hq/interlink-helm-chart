@@ -8,7 +8,7 @@ virtualNode:
   CPUs: 1000
   MemGiB: 1600
   Pods: 100
-  HTTPProxies:
+  httpProxies:
     HTTP: null
     HTTPs: null
 

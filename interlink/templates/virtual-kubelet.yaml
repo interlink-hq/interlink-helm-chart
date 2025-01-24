@@ -81,13 +81,13 @@ spec:
         - name: VKTOKENFILE
           value: "/opt/interlink/token"
         {{- end }}
-        {{- if .Values.virtualNode.HTTPProxies.HTTP }}
+        {{- if .Values.virtualNode.httpProxies.http }}
         - name: HTTP_PROXY
-          value: {{ .Values.virtualNode.HTTPProxies.HTTP }}
+          value: {{ .Values.virtualNode.httpProxies.http }}
         {{- end }}
-        {{- if .Values.virtualNode.HTTPProxies.HTTPs }}
+        {{- if .Values.virtualNode.httpProxies.https }}
         - name: HTTPS_PROXY
-          value: {{ .Values.virtualNode.HTTPProxies.HTTPs }}
+          value: {{ .Values.virtualNode.httpProxies.https }}
         {{- end }}
         volumeMounts:
         - name: config
