@@ -6,37 +6,37 @@ metadata:
 data:
   InterLinkConfig.yaml: |
     {{- if .Values.interlink.socket }}
-    interlinkURL: {{ .Values.interlink.socket | quote }}
-    interlinkPort: {{ printf "%s-1" .Values.interlink.socket | quote }}
+    InterlinkURL: {{ .Values.interlink.socket | quote }}
+    InterlinkPort: {{ printf "%s-1" .Values.interlink.socket | quote }}
     {{- else }}
-    interlinkURL: {{ .Values.interlink.address | quote }}
-    interlinkPort: {{ .Values.interlink.port | quote }}
+    InterlinkURL: {{ .Values.interlink.address | quote }}
+    InterlinkPort: {{ .Values.interlink.port | quote }}
     {{- end }}
-    exportPodData: {{ .Values.interlink.exportPodData }}
-    verboseLogging: true
-    errorsOnlyLogging: false
-    serviceAccount: "{{ .Values.nodeName }}"
-    namespace: "{{ .Release.Namespace }}"
-    vkTokenFile: {{ .Values.OAUTH.enabled | ternary "/opt/interlink/token" "/dev/null" }}
-    resources:
-      cpu: "{{ .Values.virtualNode.resources.cpus }}"
-      memory: "{{ .Values.virtualNode.resources.memgib }}Gi"
-      pods: "{{ .Values.virtualNode.resources.pods }}"
-      accelerators:
+    ExportPodData: {{ .Values.interlink.exportPodData }}
+    VerboseLogging: true
+    ErrorsOnlyLogging: false
+    ServiceAccount: "{{ .Values.nodeName }}"
+    Namespace: "{{ .Release.Namespace }}"
+    VKTokenFile: {{ .Values.OAUTH.enabled | ternary "/opt/interlink/token" "/dev/null" }}
+    Resources:
+      CPU: "{{ .Values.virtualNode.resources.cpus }}"
+      Memory: "{{ .Values.virtualNode.resources.memgib }}Gi"
+      Pods: "{{ .Values.virtualNode.resources.pods }}"
+      Accelerators:
       {{- range .Values.virtualNode.resources.accelerators }}
-      - resource_type: "{{ .resource_type }}"
-        model: "{{ .model }}"
-        available: {{ .available }}
+      - Resource_type: "{{ .resource_type }}"
+        Model: "{{ .model }}"
+        Available: {{ .available }}
       {{- end }}
-    http:
-      insecure: {{ .Values.virtualNode.http.insecure }}
-    kubeletHTTP:
+    HTTP:
+      Insecure: {{ .Values.virtualNode.http.insecure }}
+    KubeletHTTP:
       insecure: {{ .Values.virtualNode.kubeletHTTP.insecure }}
-    nodeLabels:
+    NodeLabels:
       {{- range .Values.virtualNode.nodeLabels }}
       - "{{ . }}"
       {{- end }}
-    nodeTaints:
+    NodeTaints:
       {{- range .Values.virtualNode.nodeTaints }}
       - key: "{{ .key }}"
         value: "{{ .value }}"
@@ -52,21 +52,21 @@ metadata:
 data:
   InterLinkConfig.yaml: |
     {{- if .Values.interlink.socket }}
-    interlinkAddress: {{ .Values.interlink.socket | quote }}
+    InterlinkAddress: {{ .Values.interlink.socket | quote }}
     {{- else }}
-    interlinkAddress: {{ .Values.interlink.address | quote }}
-    interlinkPort: {{ .Values.interlink.port | quote }}
+    InterlinkAddress: {{ .Values.interlink.address | quote }}
+    InterlinkPort: {{ .Values.interlink.port | quote }}
     {{- end }}
     {{- if .Values.plugin.socket }}
-    sidecarURL: {{ .Values.plugin.socket | quote }}
+    SidecarURL: {{ .Values.plugin.socket | quote }}
     {{- else }}
-    sidecarURL: {{ .Values.plugin.address | quote }}
-    sidecarPort: {{ .Values.plugin.port | quote }}
+    SidecarURL: {{ .Values.plugin.address | quote }}
+    SidecarPort: {{ .Values.plugin.port | quote }}
     {{- end }}
-    verboseLogging: true
-    errorsOnlyLogging: false
-    exportPodData: {{ .Values.interlink.exportPodData }}
-    dataRootFolder: /data/interlink
+    VerboseLogging: true
+    ErrorsOnlyLogging: false
+    ExportPodData: {{ .Values.interlink.exportPodData }}
+    DataRootFolder: /data/interlink
 {{- end }}
 ---
 {{- if .Values.plugin.enabled }}
