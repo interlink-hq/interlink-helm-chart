@@ -19,13 +19,16 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Creates environment variables
+        run: |
+          echo "GITHUB_REPOSITORY_LOWERCASE=$(echo ${GITHUB_REPOSITORY} | tr '[:upper:]' '[:lower:]' )" >>${GITHUB_ENV}
+
       - name: Print environment variables
         run: |
           echo "Repository name: $GITHUB_REPOSITORY"
           echo "Branch name: $GITHUB_REF"
           echo "GITHUB_ACTOR: $GITHUB_ACTOR"
-
-          echo GITHUB_REPOSITORY_LOWERCASE="$(echo ${GITHUB_REPOSITORY} | tr '[:upper:]' '[:lower:]' )"
+          echo "GITHUB_REPOSITORY_LOWERCASE: $GITHUB_REPOSITORY_LOWERCASE"
 
       - name: Configure Git
         run: |
