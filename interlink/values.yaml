@@ -14,6 +14,9 @@ interlink:
   # if socket is specified, the address/port are ignored
   address: http://localhost
   port: 4000
+  kubernetesApiAddr: ""
+  kubernetesApiPort: ""
+  kubernetesApiCaCrt: ""
 
 virtualNode:
   image: ghcr.io/intertwin-eu/interlink/virtual-kubelet-inttw:latest 
