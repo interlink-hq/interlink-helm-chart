@@ -17,6 +17,8 @@ interlink:
   kubernetesApiAddr: ""
   kubernetesApiPort: ""
   kubernetesApiCaCrt: ""
+  # If true, do nothing about projected volumes (flag useful in test environment)
+  disableProjectedVolumes: false
 
 virtualNode:
   image: ghcr.io/intertwin-eu/interlink/virtual-kubelet-inttw:latest 
