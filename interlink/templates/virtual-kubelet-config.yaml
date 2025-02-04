@@ -22,6 +22,9 @@ data:
     KubernetesApiCaCrt: |
 {{.Values.interlink.kubernetesApiCaCrt | indent 6 }}
     {{- end }}
+    {{- if .Values.interlink.disableProjectedVolumes }}
+    DisableProjectedVolumes: {{.Values.interlink.disableProjectedVolumes }}
+    {{- end }}
     ExportPodData: {{ .Values.interlink.exportPodData }}
     VerboseLogging: true
     ErrorsOnlyLogging: false
