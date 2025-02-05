@@ -19,8 +19,8 @@ data:
     Namespace: "{{ .Release.Namespace }}"
     VKTokenFile: {{ .Values.OAUTH.enabled | ternary "/opt/interlink/token" "/dev/null" }}
     Resources:
-      CPU: "{{ .Values.virtualNode.resources.cpus }}"
-      Memory: "{{ .Values.virtualNode.resources.memgib }}Gi"
+      CPU: "{{ .Values.virtualNode.resources.CPUs }}"
+      Memory: "{{ .Values.virtualNode.resources.memGib }}Gi"
       Pods: "{{ .Values.virtualNode.resources.pods }}"
       Accelerators:
       {{- range .Values.virtualNode.resources.accelerators }}
@@ -29,7 +29,7 @@ data:
         Available: {{ .available }}
       {{- end }}
     HTTP:
-      Insecure: {{ .Values.virtualNode.http.insecure }}
+      Insecure: {{ .Values.virtualNode.HTTP.insecure }}
     KubeletHTTP:
       insecure: {{ .Values.virtualNode.kubeletHTTP.insecure }}
     NodeLabels:

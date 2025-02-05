@@ -18,8 +18,8 @@ interlink:
 virtualNode:
   image: ghcr.io/intertwin-eu/interlink/virtual-kubelet-inttw:latest 
   resources:
-    cpus: 8
-    memgib: 49
+    CPUs: 8
+    memGib: 49
     pods: 100
     # add accelerators to the virtual node
     #accelerators:
@@ -31,10 +31,10 @@ virtualNode:
     #- resource_type: nvidia.com/gpu
     #  model: a100
     #  available: 1
-  httpProxies:
-    http: null
-    https: null
-  http:
+  HTTPProxies:
+    HTTP: null
+    HTTPs: null
+  HTTP:
     insecure: true
   kubeletHTTP:
     insecure: true
