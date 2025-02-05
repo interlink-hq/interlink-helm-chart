@@ -14,6 +14,11 @@ interlink:
   # if socket is specified, the address/port are ignored
   address: http://localhost
   port: 4000
+  kubernetesApiAddr: ""
+  kubernetesApiPort: ""
+  kubernetesApiCaCrt: ""
+  # If true, do nothing about projected volumes (flag useful in test environment)
+  disableProjectedVolumes: false
 
 virtualNode:
   image: ghcr.io/intertwin-eu/interlink/virtual-kubelet-inttw:latest 
