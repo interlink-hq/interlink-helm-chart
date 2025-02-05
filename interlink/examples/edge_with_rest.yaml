@@ -5,12 +5,12 @@ interlink:
   port: 30443
 
 virtualNode:
-  cpus: 8
-  memgib: 49
+  CPUs: 8
+  memGib: 49
   pods: 100
-  httpProxies:
-    http: null
-    https: null
+  HTTPProxies:
+    HTTP: null
+    HTTPs: null
 
 OAUTH:
   image: ghcr.io/intertwin-eu/interlink/virtual-kubelet-inttw-refresh:latest
