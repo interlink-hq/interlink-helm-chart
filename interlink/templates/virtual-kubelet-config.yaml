@@ -37,7 +37,7 @@ data:
       Pods: "{{ .Values.virtualNode.resources.pods }}"
       Accelerators:
       {{- range .Values.virtualNode.resources.accelerators }}
-      - Resource_type: "{{ .resource_type }}"
+      - ResourceType: "{{ .resourceType }}"
         Model: "{{ .model }}"
         Available: {{ .available }}
       {{- end }}

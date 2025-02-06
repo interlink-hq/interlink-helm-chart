@@ -29,11 +29,11 @@ virtualNode:
     # add accelerators to the virtual node
     #accelerators:
     # fpga example
-    #- resource_type: xilinx.com/fpga
+    #- resourceType: xilinx.com/fpga
     #  model: u55c
     #  available: 1
     # gpu example
-    #- resource_type: nvidia.com/gpu
+    #- resourceType: nvidia.com/gpu
     #  model: a100
     #  available: 1
   HTTPProxies:
