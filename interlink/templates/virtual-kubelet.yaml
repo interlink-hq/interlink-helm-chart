@@ -117,8 +117,6 @@ spec:
           value: {{.Values.OAUTH.RefreshToken}}
         - name: IAM_VK_AUD
           value: {{.Values.OAUTH.Audience}}
-        - name: IAM_VK_AUD
-          value: {{.Values.OAUTH.Audience}}
         - name: IAM_GRANT_TYPE 
           value: {{.Values.OAUTH.GrantType}}
         - name: TOKEN_PATH
