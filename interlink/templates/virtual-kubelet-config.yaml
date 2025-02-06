@@ -51,9 +51,9 @@ data:
       {{- end }}
     NodeTaints:
       {{- range .Values.virtualNode.nodeTaints }}
-      - key: "{{ .key }}"
-        value: "{{ .value }}"
-        effect: "{{ .effect }}"
+      - Key: "{{ .key }}"
+        Value: "{{ .value }}"
+        Effect: "{{ .effect }}"
       {{- end }}
 ---
 {{- if .Values.interlink.enabled }}
