@@ -33,7 +33,7 @@ data:
     VKTokenFile: {{ .Values.OAUTH.enabled | ternary "/opt/interlink/token" "/dev/null" }}
     Resources:
       CPU: "{{ .Values.virtualNode.resources.CPUs }}"
-      Memory: "{{ .Values.virtualNode.resources.memGib }}Gi"
+      Memory: "{{ .Values.virtualNode.resources.memGiB }}Gi"
       Pods: "{{ .Values.virtualNode.resources.pods }}"
       Accelerators:
       {{- range .Values.virtualNode.resources.accelerators }}

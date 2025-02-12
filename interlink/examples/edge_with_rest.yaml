@@ -6,7 +6,7 @@ interlink:
 
 virtualNode:
   CPUs: 8
-  memGib: 49
+  memGiB: 49
   pods: 100
   HTTPProxies:
     HTTP: null

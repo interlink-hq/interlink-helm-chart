@@ -24,7 +24,7 @@ virtualNode:
   image: ghcr.io/intertwin-eu/interlink/virtual-kubelet-inttw:latest 
   resources:
     CPUs: 8
-    memGib: 49
+    memGiB: 49
     pods: 100
     # add accelerators to the virtual node
     #accelerators:
