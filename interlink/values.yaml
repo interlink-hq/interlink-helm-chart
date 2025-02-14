@@ -19,6 +19,12 @@ interlink:
   kubernetesApiCaCrt: ""
   # If true, do nothing about projected volumes (flag useful in test environment)
   disableProjectedVolumes: false
+  # # Enable job script translation from outside service
+  # jobScript:
+  #   JobScriptBuildConfig:
+  #     singularity_hub: {}
+  #     apptainer_options: {}
+  #     volume_options: {}
 
 virtualNode:
   image: ghcr.io/intertwin-eu/interlink/virtual-kubelet-inttw:latest 
@@ -41,6 +47,7 @@ virtualNode:
     HTTPs: null
   HTTP:
     insecure: true
+    CACert: ""
   kubeletHTTP:
     insecure: true
   # uncomment to enable custom nodeSelector and nodeTaints
@@ -50,6 +57,9 @@ virtualNode:
   #  - key: "accelerator"
   #    value: "a100"
   #    effect: "NoSchedule"
+
+  # # Indicate endpoint for JobScript translator
+  # JobScriptBuilderURL: "https://test.translator.com/podtranslate"
 
 plugin:
   enabled: false

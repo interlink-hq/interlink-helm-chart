@@ -25,6 +25,9 @@ data:
     {{- if .Values.interlink.disableProjectedVolumes }}
     DisableProjectedVolumes: {{.Values.interlink.disableProjectedVolumes }}
     {{- end }}
+    {{- if .Values.virtualNode.JobScriptBuilderURL }}
+    JobScriptBuilderURL: {{.Values.virtualNode.JobScriptBuilderURL }}
+    {{- end }}
     ExportPodData: {{ .Values.interlink.exportPodData }}
     VerboseLogging: true
     ErrorsOnlyLogging: false
@@ -43,6 +46,7 @@ data:
       {{- end }}
     HTTP:
       Insecure: {{ .Values.virtualNode.HTTP.insecure }}
+      CaCert: {{ .Values.virtualNode.HTTP.CACert }}
     KubeletHTTP:
       insecure: {{ .Values.virtualNode.kubeletHTTP.insecure }}
     NodeLabels:
@@ -80,6 +84,9 @@ data:
     ErrorsOnlyLogging: false
     ExportPodData: {{ .Values.interlink.exportPodData }}
     DataRootFolder: /data/interlink
+    {{- if .Values.interlink.jobScript }}
+    {{.Values.interlink.jobScript }}
+    {{- end }}
 {{- end }}
 ---
 {{- if .Values.plugin.enabled }}
