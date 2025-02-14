@@ -5,9 +5,9 @@ interlink:
   port: 30443
 
 virtualNode:
-  CPUs: 1000
-  MemGiB: 1600
-  Pods: 100
+  CPUs: 8
+  memGiB: 49
+  pods: 100
   HTTPProxies:
     HTTP: null
     HTTPs: null

@@ -22,17 +22,34 @@ interlink:
 
 virtualNode:
   image: ghcr.io/intertwin-eu/interlink/virtual-kubelet-inttw:latest 
-  CPUs: 1000
-  MemGiB: 1600
-  Pods: 100
-  GPUs: 0
+  resources:
+    CPUs: 8
+    memGiB: 49
+    pods: 100
+    # add accelerators to the virtual node
+    #accelerators:
+    # fpga example
+    #- resourceType: xilinx.com/fpga
+    #  model: u55c
+    #  available: 1
+    # gpu example
+    #- resourceType: nvidia.com/gpu
+    #  model: a100
+    #  available: 1
   HTTPProxies:
     HTTP: null
     HTTPs: null
   HTTP:
-    Insecure: false
-  KubeletHTTP:
-    Insecure: true
+    insecure: true
+  kubeletHTTP:
+    insecure: true
+  # uncomment to enable custom nodeSelector and nodeTaints
+  #nodeLabels:
+  #  - "accelerator=a100"
+  #nodeTaints:
+  #  - key: "accelerator"
+  #    value: "a100"
+  #    effect: "NoSchedule"
 
 plugin:
   enabled: false

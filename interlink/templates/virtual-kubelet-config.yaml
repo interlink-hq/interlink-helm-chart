@@ -31,14 +31,30 @@ data:
     ServiceAccount: "{{ .Values.nodeName }}"
     Namespace: "{{ .Release.Namespace }}"
     VKTokenFile: {{ .Values.OAUTH.enabled | ternary "/opt/interlink/token" "/dev/null" }}
-    CPU: "{{ .Values.virtualNode.CPUs }}"
-    Memory: "{{ .Values.virtualNode.MemGiB }}Gi"
-    Pods: "{{ .Values.virtualNode.Pods }}"
-    nvidia.com/gpu: "{{ .Values.virtualNode.GPUs }}"
+    Resources:
+      CPU: "{{ .Values.virtualNode.resources.CPUs }}"
+      Memory: "{{ .Values.virtualNode.resources.memGiB }}Gi"
+      Pods: "{{ .Values.virtualNode.resources.pods }}"
+      Accelerators:
+      {{- range .Values.virtualNode.resources.accelerators }}
+      - ResourceType: "{{ .resourceType }}"
+        Model: "{{ .model }}"
+        Available: {{ .available }}
+      {{- end }}
     HTTP:
-      Insecure: {{ .Values.virtualNode.HTTP.Insecure }}
+      Insecure: {{ .Values.virtualNode.HTTP.insecure }}
     KubeletHTTP:
-      Insecure: {{ .Values.virtualNode.KubeletHTTP.Insecure }}
+      insecure: {{ .Values.virtualNode.kubeletHTTP.insecure }}
+    NodeLabels:
+      {{- range .Values.virtualNode.nodeLabels }}
+      - "{{ . }}"
+      {{- end }}
+    NodeTaints:
+      {{- range .Values.virtualNode.nodeTaints }}
+      - Key: "{{ .key }}"
+        Value: "{{ .value }}"
+        Effect: "{{ .effect }}"
+      {{- end }}
 ---
 {{- if .Values.interlink.enabled }}
 apiVersion: v1
@@ -62,6 +78,7 @@ data:
     {{- end }}
     VerboseLogging: true
     ErrorsOnlyLogging: false
+    ExportPodData: {{ .Values.interlink.exportPodData }}
     DataRootFolder: /data/interlink
 {{- end }}
 ---
