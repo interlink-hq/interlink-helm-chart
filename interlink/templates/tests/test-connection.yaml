@@ -8,9 +8,12 @@ metadata:
     "helm.sh/hook": test
 spec:
   serviceAccountName: {{ .Release.Name }}-test
+  imagePullSecrets:
+{{ toYaml .Values.global.images.pullSecrets | indent 4 }}
   containers:
     - name: kubectl
-      image: bitnami/kubectl
+      image: "{{ .Values.interlinkTestConnection.image.registry }}/{{ .Values.interlinkTestConnection.image.repository}}:{{ .Values.interlinkTestConnection.image.tag }}"
+      imagePullPolicy: "{{ .Values.global.images.pullPolicy }}"
       command: ['sh', '-c']
       args:
         - >
