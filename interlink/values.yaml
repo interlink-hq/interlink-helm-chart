@@ -5,7 +5,7 @@
 nodeName: virtual-node
 
 interlink:
-  image: ghcr.io/intertwin-eu/interlink/interlink:latest
+  image: ghcr.io/interlink-hq/interlink/interlink:latest
   enabled: false
   exportPodData: false
   dataRootVolume: ""
@@ -27,7 +27,7 @@ interlink:
   #     volume_options: {}
 
 virtualNode:
-  image: ghcr.io/intertwin-eu/interlink/virtual-kubelet-inttw:latest 
+  image: ghcr.io/interlink-hq/interlink/virtual-kubelet-inttw:latest 
   resources:
     CPUs: 8
     memGiB: 49
@@ -90,7 +90,7 @@ sshBastion:
 # disable OAUTH when using sockets for communication in the in-cluster mode
 OAUTH:
   enabled: false
-  image: ghcr.io/intertwin-eu/interlink/virtual-kubelet-inttw-refresh:latest
+  image: ghcr.io/interlink-hq/interlink/virtual-kubelet-inttw-refresh:latest
   TokenURL: DUMMY
   ClientID: DUMMY
   ClientSecret: DUMMY
