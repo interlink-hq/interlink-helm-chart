@@ -22,8 +22,8 @@ spec:
       - name: plugin 
         image: "{{ .Values.plugin.image }}"
         imagePullPolicy: Always
-        {{- with .Values.plugin.commands }}
-        commands:
+        {{- with .Values.plugin.command }}
+        command:
           {{- toYaml . | nindent 10 }}
         {{- end }}
         {{- with .Values.plugin.args }}
