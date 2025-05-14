@@ -155,8 +155,8 @@ spec:
         ports:
         - containerPort: 22
         volumeMounts:
-        - name: sockets
-          mountPath: /config/sockets
+        #- name: sockets
+        #  mountPath: /config/sockets
         - name: ssh-keys
           mountPath: /opt/ssh/
         # - name: sshd-config
