@@ -29,8 +29,8 @@ data:
     JobScriptBuilderURL: {{.Values.virtualNode.JobScriptBuilderURL }}
     {{- end }}
     ExportPodData: {{ .Values.interlink.exportPodData }}
-    VerboseLogging: true
-    ErrorsOnlyLogging: false
+    VerboseLogging: {{ .Values.interlink.logging.verboseLogging | default true }}
+    ErrorsOnlyLogging: {{ .Values.interlink.logging.errorsOnlyLogging | default false }}
     ServiceAccount: "{{ .Values.nodeName }}"
     Namespace: "{{ .Release.Namespace }}"
     VKTokenFile: {{ .Values.OAUTH.enabled | ternary "/opt/interlink/token" "/dev/null" }}
@@ -76,12 +76,27 @@ data:
     {{- end }}
     {{- if .Values.plugin.socket }}
     SidecarURL: {{ .Values.plugin.socket | quote }}
+    {{- else if .Values.interlink.pluginEndpoint.url }}
+    SidecarURL: {{ .Values.interlink.pluginEndpoint.url | quote }}
+    SidecarPort: {{ .Values.interlink.pluginEndpoint.port | quote }}
     {{- else }}
     SidecarURL: {{ .Values.plugin.address | quote }}
     SidecarPort: {{ .Values.plugin.port | quote }}
     {{- end }}
-    VerboseLogging: true
-    ErrorsOnlyLogging: false
+    VerboseLogging: {{ .Values.interlink.logging.verboseLogging | default true }}
+    ErrorsOnlyLogging: {{ .Values.interlink.logging.errorsOnlyLogging | default false }}
+    {{- if .Values.interlink.tls.enabled }}
+    TLSEnabled: {{ .Values.interlink.tls.enabled }}
+    {{- if .Values.interlink.tls.certFile }}
+    TLSCertFile: {{ .Values.interlink.tls.certFile | quote }}
+    {{- end }}
+    {{- if .Values.interlink.tls.keyFile }}
+    TLSKeyFile: {{ .Values.interlink.tls.keyFile | quote }}
+    {{- end }}
+    {{- if .Values.interlink.tls.caCertFile }}
+    TLSCACertFile: {{ .Values.interlink.tls.caCertFile | quote }}
+    {{- end }}
+    {{- end }}
     ExportPodData: {{ .Values.interlink.exportPodData }}
     DataRootFolder: /data/interlink
     {{- if .Values.interlink.jobScript }}

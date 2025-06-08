@@ -19,6 +19,23 @@ interlink:
   kubernetesApiCaCrt: ""
   # If true, do nothing about projected volumes (flag useful in test environment)
   disableProjectedVolumes: false
+  # TLS configuration for secure communication
+  tls:
+    enabled: false
+    certFile: ""
+    keyFile: ""
+    caCertFile: ""
+  # Logging configuration
+  logging:
+    verboseLogging: false
+    errorsOnlyLogging: false
+  # Tracing configuration
+  tracing:
+    enabled: false
+  # Plugin endpoint configuration for VPN/networking
+  pluginEndpoint:
+    url: ""
+    port: ""
   # # Enable job script translation from outside service
   # jobScript:
   #   JobScriptBuildConfig:
@@ -50,6 +67,9 @@ virtualNode:
     CACert: ""
   kubeletHTTP:
     insecure: true
+  # Tracing configuration
+  tracing:
+    enabled: false
   # uncomment to enable custom nodeSelector and nodeTaints
   #nodeLabels:
   #  - "accelerator=a100"
