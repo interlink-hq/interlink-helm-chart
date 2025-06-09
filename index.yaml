@@ -3,6 +3,16 @@ entries:
   interlink:
   - apiVersion: v2
     appVersion: 0.3.5
+    created: "2025-06-09T13:04:45.064264871Z"
+    description: Install interLink components and initiate your virtual node.
+    digest: ddac0aea2c281aafddedb6a74979849a7852bbb1fff25755ee73269597d0fa03
+    name: interlink
+    type: application
+    urls:
+    - https://github.com/interlink-hq/interlink-helm-chart/releases/download/interlink-0.5.0/interlink-0.5.0.tgz
+    version: 0.5.0
+  - apiVersion: v2
+    appVersion: 0.3.5
     created: "2025-04-23T13:55:41.072252447Z"
     description: Install interLink components and initiate your virtual node.
     digest: 57158c12e3133650b2b37c4516b75275741815a5d2564da746771e790fe66404
@@ -31,4 +41,4 @@ entries:
     urls:
     - https://github.com/interTwin-eu/interlink-helm-chart/releases/download/interlink-0.1.0/interlink-0.1.0.tgz
     version: 0.1.0
-generated: "2025-04-23T13:55:41.072269318Z"
+generated: "2025-06-09T13:04:45.064293364Z"
