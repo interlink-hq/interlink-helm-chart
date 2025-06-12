@@ -93,9 +93,9 @@ Common issues:
 
 📚 RESOURCES:
 
-• Documentation: https://intertwin-eu.github.io/interLink/
-• Cookbook: https://intertwin-eu.github.io/interLink/docs/cookbook
-• Chart repository: https://intertwin-eu.github.io/interlink-helm-chart/
+• Documentation: https://interlink-hq.github.io/interLink/
+• Cookbook: https://interlink-hq.github.io/interLink/docs/cookbook
+• Chart repository: https://interlink-hq.github.io/interlink-helm-chart/
 
 Happy computing with interLink! 🚀
 
