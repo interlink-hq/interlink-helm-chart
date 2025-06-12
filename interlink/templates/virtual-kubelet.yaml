@@ -62,11 +62,6 @@ spec:
           - name: {{ .Values.interlink.dataRootVolume }}
             mountPath: /data/interlink
           {{- end }}
-          {{- if .Values.interlink.tls.enabled }}
-          - name: tls-certs
-            mountPath: /etc/vk/certs
-            readOnly: true
-          {{- end }}
       {{- end }}
       - name: vk
         image: {{ .Values.virtualNode.image }}
@@ -112,16 +107,7 @@ spec:
         {{- end }}
         {{- if .Values.interlink.tls.enabled }}
         - name: tls-certs
-          mountPath: {{ .Values.interlink.tls.certFile }}
-          subPath: tls.crt
-          readOnly: true
-        - name: tls-certs
-          mountPath: {{ .Values.interlink.tls.keyFile }}
-          subPath: tls.key
-          readOnly: true
-        - name: tls-certs
-          mountPath: {{ .Values.interlink.tls.caCertFile }}
-          subPath: ca.crt
+          mountPath: /etc/vk/certs
           readOnly: true
         {{- end }}
       {{- if .Values.OAUTH.enabled }}
