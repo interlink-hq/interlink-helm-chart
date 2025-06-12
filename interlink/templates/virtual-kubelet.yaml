@@ -125,6 +125,20 @@ spec:
         - name: sockets
           mountPath: /var/run/
         {{- end }}
+        {{- if .Values.interlink.tls.enabled }}
+        - name: tls-certs
+          mountPath: {{ .Values.interlink.tls.certFile }}
+          subPath: tls.crt
+          readOnly: true
+        - name: tls-certs
+          mountPath: {{ .Values.interlink.tls.keyFile }}
+          subPath: tls.key
+          readOnly: true
+        - name: tls-certs
+          mountPath: {{ .Values.interlink.tls.caCertFile }}
+          subPath: ca.crt
+          readOnly: true
+        {{- end }}
       {{- if .Values.OAUTH.enabled }}
       - name: refresh-token
         image: "{{ .Values.OAUTH.image }}"
