@@ -34,6 +34,13 @@ data:
     ServiceAccount: "{{ .Values.nodeName }}"
     Namespace: "{{ .Release.Namespace }}"
     VKTokenFile: {{ .Values.OAUTH.enabled | ternary "/opt/interlink/token" "/dev/null" }}
+    {{- if .Values.interlink.tls.enabled }}
+    TLS:
+      Enabled: {{ .Values.interlink.tls.enabled }}
+      CertFile: {{ .Values.interlink.tls.certFile | quote }}
+      KeyFile: {{ .Values.interlink.tls.keyFile | quote }}
+      CACertFile: {{ .Values.interlink.tls.caCertFile | quote }}
+    {{- end }}
     Resources:
       CPU: "{{ .Values.virtualNode.resources.CPUs }}"
       Memory: "{{ .Values.virtualNode.resources.memGiB }}Gi"
