@@ -86,16 +86,17 @@ data:
     VerboseLogging: {{ .Values.interlink.logging.verboseLogging | default true }}
     ErrorsOnlyLogging: {{ .Values.interlink.logging.errorsOnlyLogging | default false }}
     {{- if .Values.interlink.tls.enabled }}
-    TLSEnabled: {{ .Values.interlink.tls.enabled }}
-    {{- if .Values.interlink.tls.certFile }}
-    TLSCertFile: {{ .Values.interlink.tls.certFile | quote }}
-    {{- end }}
-    {{- if .Values.interlink.tls.keyFile }}
-    TLSKeyFile: {{ .Values.interlink.tls.keyFile | quote }}
-    {{- end }}
-    {{- if .Values.interlink.tls.caCertFile }}
-    TLSCACertFile: {{ .Values.interlink.tls.caCertFile | quote }}
-    {{- end }}
+    TLS:
+      Enabled: {{ .Values.interlink.tls.enabled }}
+      {{- if .Values.interlink.tls.certFile }}
+      CertFile: {{ .Values.interlink.tls.certFile | quote }}
+      {{- end }}
+      {{- if .Values.interlink.tls.keyFile }}
+      KeyFile: {{ .Values.interlink.tls.keyFile | quote }}
+      {{- end }}
+      {{- if .Values.interlink.tls.caCertFile }}
+      CACertFile: {{ .Values.interlink.tls.caCertFile | quote }}
+      {{- end }}
     {{- end }}
     ExportPodData: {{ .Values.interlink.exportPodData }}
     DataRootFolder: /data/interlink
