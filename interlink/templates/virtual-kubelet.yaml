@@ -63,24 +63,9 @@ spec:
             mountPath: /data/interlink
           {{- end }}
           {{- if .Values.interlink.tls.enabled }}
-          {{- if .Values.interlink.tls.certFile }}
           - name: tls-certs
-            mountPath: {{ .Values.interlink.tls.certFile }}
-            subPath: tls.crt
+            mountPath: /etc/vk/certs
             readOnly: true
-          {{- end }}
-          {{- if .Values.interlink.tls.keyFile }}
-          - name: tls-certs
-            mountPath: {{ .Values.interlink.tls.keyFile }}
-            subPath: tls.key
-            readOnly: true
-          {{- end }}
-          {{- if .Values.interlink.tls.caCertFile }}
-          - name: tls-certs
-            mountPath: {{ .Values.interlink.tls.caCertFile }}
-            subPath: ca.crt
-            readOnly: true
-          {{- end }}
           {{- end }}
       {{- end }}
       - name: vk
