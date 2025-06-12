@@ -50,6 +50,7 @@ jobs:
             charts_dir: ./
             oci_password: ${{ secrets.GITHUB_TOKEN }}
             github_token: ${{ secrets.GITHUB_TOKEN }}
+            skip_existing: false
             #tag: ${{ github.ref_name }}
 
       - name: Run chart-releaser
