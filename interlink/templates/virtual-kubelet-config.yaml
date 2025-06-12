@@ -120,5 +120,5 @@ metadata:
   namespace: {{ .Release.Namespace }}
 data:
   plugin.yaml: |
-    {{ .Values.plugin.config | indent 4 }}
+{{ .Values.plugin.config | indent 4 }}
 {{- end }}

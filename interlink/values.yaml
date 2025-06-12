@@ -84,7 +84,7 @@ virtualNode:
 plugin:
   enabled: false
   image: "" 
-  commands: [] 
+  command: []
   args: []
   # content of the "config" will be mounted as /etc/interlink/plugin.yaml
   config: ""
