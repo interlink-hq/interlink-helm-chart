@@ -59,6 +59,10 @@ virtualNode:
     #- resourceType: nvidia.com/gpu
     #  model: a100
     #  available: 1
+    # podCIDR:
+    # subnet: 10.42.122.0/24
+    # minIP: 2
+    # maxIP: 250
   HTTPProxies:
     HTTP: null
     HTTPs: null
