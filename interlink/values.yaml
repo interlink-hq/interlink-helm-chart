@@ -150,3 +150,20 @@ extraVolumes: []
   #   hostPath:
   #     path: /scratch/interlink/
   #     type: DirectoryOrCreate
+
+# Pod scheduling configuration
+podScheduling:
+  # Node selector for the interlink pod
+  nodeSelector: {}
+    # kubernetes.io/hostname: specific-node
+    # node-type: worker
+  
+  # Tolerations for the interlink pod
+  tolerations: []
+    # - key: "node-type"
+    #   operator: "Equal"
+    #   value: "gpu"
+    #   effect: "NoSchedule"
+    # - key: "dedicated"
+    #   operator: "Exists"
+    #   effect: "NoSchedule"
