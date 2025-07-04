@@ -51,6 +51,10 @@ data:
         Model: "{{ .model }}"
         Available: {{ .available }}
       {{- end }}
+    PodCIDR:
+      Subnet: {{ .Values.virtualNode.podCIDR.subnet }}
+      MinIP: {{ .Values.virtualNode.podCIDR.minIP }}
+      MaxIP: {{ .Values.virtualNode.podCIDR.maxIP }}
     HTTP:
       Insecure: {{ .Values.virtualNode.HTTP.insecure }}
       CaCert: {{ .Values.virtualNode.HTTP.CACert }}
