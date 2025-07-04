@@ -36,6 +36,11 @@ interlink:
   pluginEndpoint:
     url: ""
     port: ""
+  # Extra volume mounts for the interlink container
+  extraVolumeMounts: []
+    # - name: data-root
+    #   mountPath: /data
+    #   readOnly: false
   # # Enable job script translation from outside service
   # jobScript:
   #   JobScriptBuildConfig:
@@ -77,6 +82,11 @@ virtualNode:
   #  - key: "accelerator"
   #    value: "a100"
   #    effect: "NoSchedule"
+  # Extra volume mounts for the virtual kubelet container
+  extraVolumeMounts: []
+    # - name: data-root
+    #   mountPath: /data
+    #   readOnly: false
 
   # # Indicate endpoint for JobScript translator
   # JobScriptBuilderURL: "https://test.translator.com/podtranslate"
@@ -95,6 +105,13 @@ plugin:
   # if socket is specified, the address/port are ignored
   address: ""
   port: 3000
+  # Run plugin container with privileged permissions
+  privileged: false
+  # Extra volume mounts for the plugin container
+  extraVolumeMounts: []
+    # - name: data-root
+    #   mountPath: /data
+    #   readOnly: false
 
 sshBastion:
   enabled: false
@@ -106,6 +123,11 @@ sshBastion:
     priv: ""
     pub: ""
   port: 31022
+  # Extra volume mounts for the SSH bastion container
+  extraVolumeMounts: []
+    # - name: data-root
+    #   mountPath: /data
+    #   readOnly: false
     
 # disable OAUTH when using sockets for communication in the in-cluster mode
 OAUTH:
@@ -117,6 +139,11 @@ OAUTH:
   RefreshToken: DUMMY
   GrantType: authorization_code
   Audience: DUMMY
+  # Extra volume mounts for the OAuth refresh token container
+  extraVolumeMounts: []
+    # - name: data-root
+    #   mountPath: /data
+    #   readOnly: false
 
 # define extra volumes (e.g. for DataRootVolume)
 extraVolumes: []

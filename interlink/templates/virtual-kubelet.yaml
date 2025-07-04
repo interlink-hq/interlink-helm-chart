@@ -22,6 +22,10 @@ spec:
       - name: plugin 
         image: "{{ .Values.plugin.image }}"
         imagePullPolicy: Always
+        {{- if .Values.plugin.privileged }}
+        securityContext:
+          privileged: true
+        {{- end }}
         {{- with .Values.plugin.command }}
         command:
           {{- toYaml . | nindent 10 }}
@@ -42,6 +46,9 @@ spec:
           - name: sockets
             mountPath: /var/run/
           {{- end }}
+          {{- with .Values.plugin.extraVolumeMounts }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
       {{- end }}
       {{- if .Values.interlink.enabled }}
       - name: interlink
@@ -61,6 +68,9 @@ spec:
           {{- if .Values.interlink.exportPodData }}
           - name: {{ .Values.interlink.dataRootVolume }}
             mountPath: /data/interlink
+          {{- end }}
+          {{- with .Values.interlink.extraVolumeMounts }}
+          {{- toYaml . | nindent 10 }}
           {{- end }}
       {{- end }}
       - name: vk
@@ -110,6 +120,9 @@ spec:
           mountPath: /etc/vk/certs
           readOnly: true
         {{- end }}
+        {{- with .Values.virtualNode.extraVolumeMounts }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
       {{- if .Values.OAUTH.enabled }}
       - name: refresh-token
         image: "{{ .Values.OAUTH.image }}"
@@ -143,6 +156,9 @@ spec:
         volumeMounts:
         - name: token
           mountPath: /opt/interlink
+        {{- with .Values.OAUTH.extraVolumeMounts }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
       {{- end }}
       {{- if .Values.sshBastion.enabled }}
       - name: ssh-bastion
@@ -171,6 +187,9 @@ spec:
         # - name: sshd-config
         #   mountPath: /etc/ssh/sshd_config
         #   subPath: sshd_config
+        {{- with .Values.sshBastion.extraVolumeMounts }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
       {{- end }}
       volumes:
       - name: config
