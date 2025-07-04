@@ -157,7 +157,7 @@ podScheduling:
   nodeSelector: {}
     # kubernetes.io/hostname: specific-node
     # node-type: worker
-  
+
   # Tolerations for the interlink pod
   tolerations: []
     # - key: "node-type"
