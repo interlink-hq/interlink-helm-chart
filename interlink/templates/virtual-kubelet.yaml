@@ -17,6 +17,14 @@ spec:
     spec:
       automountServiceAccountToken: true
       serviceAccountName: {{ .Values.nodeName }}
+      {{- with .Values.podScheduling.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.podScheduling.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
       {{- if .Values.plugin.enabled }}
       - name: plugin 

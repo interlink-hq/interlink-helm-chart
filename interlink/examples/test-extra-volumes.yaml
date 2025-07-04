@@ -32,6 +32,20 @@ OAUTH:
     - name: oauth-data
       mountPath: /oauth-data
 
+podScheduling:
+  nodeSelector:
+    node-type: worker
+    kubernetes.io/arch: amd64
+  tolerations:
+    - key: "dedicated"
+      operator: "Equal"
+      value: "interlink"
+      effect: "NoSchedule"
+    - key: "node-type"
+      operator: "Equal"
+      value: "gpu"
+      effect: "NoExecute"
+
 extraVolumes:
   - name: data-root
     hostPath:
