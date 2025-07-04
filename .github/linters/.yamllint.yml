@@ -1,6 +1,5 @@
+---
 extends: default
 ignore: |
-  interlink/templates/*.yaml
-  interlink/templates/**/*.yaml
-  */templates/*.yaml
-  */templates/**/*.yaml
+  interlink/templates/
+  */templates/
