@@ -1,0 +1,11 @@
+---
+# chart-testing configuration
+chart-dirs:
+  - .
+charts:
+  - interlink
+helm-extra-args: --timeout 600s
+validate-maintainers: false
+check-version-increment: false
+# Skip install tests that require actual cluster resources
+skip-install: false

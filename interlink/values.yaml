@@ -49,19 +49,19 @@ interlink:
   #     volume_options: {}
 
 virtualNode:
-  image: ghcr.io/interlink-hq/interlink/virtual-kubelet-inttw:latest 
+  image: ghcr.io/interlink-hq/interlink/virtual-kubelet-inttw:latest
   resources:
     CPUs: 8
     memGiB: 49
     pods: 100
     # add accelerators to the virtual node
-    #accelerators:
+    # accelerators:
     # fpga example
-    #- resourceType: xilinx.com/fpga
+    # - resourceType: xilinx.com/fpga
     #  model: u55c
     #  available: 1
     # gpu example
-    #- resourceType: nvidia.com/gpu
+    # - resourceType: nvidia.com/gpu
     #  model: a100
     #  available: 1
   HTTPProxies:
@@ -76,9 +76,9 @@ virtualNode:
   tracing:
     enabled: false
   # uncomment to enable custom nodeSelector and nodeTaints
-  #nodeLabels:
+  # nodeLabels:
   #  - "accelerator=a100"
-  #nodeTaints:
+  # nodeTaints:
   #  - key: "accelerator"
   #    value: "a100"
   #    effect: "NoSchedule"
@@ -93,7 +93,7 @@ virtualNode:
 
 plugin:
   enabled: false
-  image: "" 
+  image: ""
   command: []
   args: []
   # content of the "config" will be mounted as /etc/interlink/plugin.yaml
@@ -115,7 +115,7 @@ plugin:
 
 sshBastion:
   enabled: false
-  image: lscr.io/linuxserver/openssh-server:latest 
+  image: lscr.io/linuxserver/openssh-server:latest
   clientKeys:
     authorizedKeys: ""
     keysURL: ""
@@ -128,7 +128,6 @@ sshBastion:
     # - name: data-root
     #   mountPath: /data
     #   readOnly: false
-    
 # disable OAUTH when using sockets for communication in the in-cluster mode
 OAUTH:
   enabled: false

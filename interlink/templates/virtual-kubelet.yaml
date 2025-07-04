@@ -1,8 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.nodeName }}-node 
-  namespace: {{ .Release.Namespace}} 
+  name: {{ .Values.nodeName }}-node
+  namespace: {{ .Release.Namespace }}
   labels:
     app: {{ .Values.nodeName }}
 spec:
@@ -163,8 +163,10 @@ spec:
       {{- if .Values.sshBastion.enabled }}
       - name: ssh-bastion
         image: "{{ .Values.sshBastion.image }}"
+        imagePullPolicy: Always
         ports:
         - containerPort: 2222
+        - containerPort: 22
         env:
         - name: PUBLIC_KEY_FILE
           value: /opt/ssh/authorized_keys 
@@ -176,9 +178,6 @@ spec:
           value: linuxserver/mods:openssh-server-ssh-tunnel
         - name: SHELL_NOLOGIN
           value: "true"
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 22
         volumeMounts:
         #- name: sockets
         #  mountPath: /config/sockets

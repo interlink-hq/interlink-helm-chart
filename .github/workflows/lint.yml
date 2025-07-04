@@ -1,5 +1,5 @@
 ---
-name: Lint
+name: General Lint
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   super-lint:
-    name: Lint with Super-Linter
+    name: General Code Linting
     runs-on: ubuntu-latest
 
     steps:
@@ -20,8 +20,8 @@ jobs:
           # Full git history needed to get proper list of changed files
           fetch-depth: 0
 
-      # Runs the Super-Linter action
-      - name: Run Super-Linter on new changes
+      # Runs the Super-Linter action for general code quality
+      - name: Run Super-Linter for general validation
         uses: docker://ghcr.io/github/super-linter:slim-v4
         env:
           DEFAULT_BRANCH: main
@@ -31,3 +31,8 @@ jobs:
           VALIDATE_ALL_CODEBASE: false
           # Fail on errors
           DISABLE_ERRORS: false
+          # Disable kubeval since it can't handle Helm templates
+          VALIDATE_KUBERNETES_KUBEVAL: false
+          # Disable YAML validation since it can't handle Helm templates
+          VALIDATE_YAML: false
+          # Note: Helm-specific validation is handled by helm-lint.yml workflow
