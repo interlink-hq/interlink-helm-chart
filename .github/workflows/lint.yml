@@ -31,3 +31,5 @@ jobs:
           VALIDATE_ALL_CODEBASE: false
           # Fail on errors
           DISABLE_ERRORS: false
+          # Disable kubeval since it can't handle Helm templates
+          VALIDATE_KUBERNETES_KUBEVAL: false
