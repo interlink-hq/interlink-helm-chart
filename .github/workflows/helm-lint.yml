@@ -35,7 +35,7 @@ jobs:
           helm template virtual-node ./interlink --values ./interlink/values.yaml | kubeval --ignore-missing-schemas
 
       - name: Install chart-testing
-        uses: helm/chart-testing-action@v2.6.1
+        uses: helm/chart-testing-action@v2.7.0
 
       - name: Run chart-testing (lint)
         run: |
