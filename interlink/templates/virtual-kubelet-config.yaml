@@ -82,8 +82,8 @@ data:
         {{.Values.virtualNode.network.wstunnelTemplatePath |
         default "/etc/templates/wstunnel.yaml" | quote}}
       WstunnelCommand: {{ .Values.virtualNode.network.wstunnelCommand | quote }}
----
 {{- if .Values.interlink.enabled}}
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:

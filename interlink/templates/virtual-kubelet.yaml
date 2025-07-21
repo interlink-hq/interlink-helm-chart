@@ -1,22 +1,23 @@
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.nodeName }}-node
-  namespace: {{ .Release.Namespace }}
+  name: {{.Values.nodeName}}-node
+  namespace: {{.Release.Namespace}}
   labels:
-    app: {{ .Values.nodeName }}
+    app: {{.Values.nodeName}}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: {{ .Values.nodeName }}
+      app: {{.Values.nodeName}}
   template:
     metadata:
       labels:
-        app: {{ .Values.nodeName }}
+        app: {{.Values.nodeName}}
     spec:
       automountServiceAccountToken: true
-      serviceAccountName: {{ .Values.nodeName }}
+      serviceAccountName: {{.Values.nodeName}}
       {{- with .Values.podScheduling.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -27,8 +28,8 @@ spec:
       {{- end }}
       containers:
       {{- if .Values.plugin.enabled }}
-      - name: plugin 
-        image: "{{ .Values.plugin.image }}"
+      - name: plugin
+        image: "{{.Values.plugin.image}}"
         imagePullPolicy: Always
         {{- if .Values.plugin.privileged }}
         securityContext:
@@ -60,7 +61,7 @@ spec:
       {{- end }}
       {{- if .Values.interlink.enabled }}
       - name: interlink
-        image: "{{ .Values.interlink.image }}"
+        image: "{{.Values.interlink.image}}"
         imagePullPolicy: Always
         env:
           - name: INTERLINKCONFIGPATH
@@ -74,7 +75,7 @@ spec:
             mountPath: /var/run/
           {{- end }}
           {{- if .Values.interlink.exportPodData }}
-          - name: {{ .Values.interlink.dataRootVolume }}
+          - name: {{.Values.interlink.dataRootVolume}}
             mountPath: /data/interlink
           {{- end }}
           {{- with .Values.interlink.extraVolumeMounts }}
@@ -82,11 +83,11 @@ spec:
           {{- end }}
       {{- end }}
       - name: vk
-        image: {{ .Values.virtualNode.image }}
+        image: {{.Values.virtualNode.image}}
         imagePullPolicy: Always
         env:
         - name: NODENAME
-          value: {{ .Values.nodeName }}
+          value: {{.Values.nodeName}}
         - name: KUBELET_PORT
           value: "10250"
         - name: POD_IP
@@ -105,11 +106,11 @@ spec:
         {{- end }}
         {{- if .Values.virtualNode.HTTPProxies.HTTP }}
         - name: HTTP_PROXY
-          value: {{ .Values.virtualNode.HTTPProxies.HTTP }}
+          value: {{.Values.virtualNode.HTTPProxies.HTTP}}
         {{- end }}
         {{- if .Values.virtualNode.HTTPProxies.HTTPs }}
         - name: HTTPS_PROXY
-          value: {{ .Values.virtualNode.HTTPProxies.HTTPs }}
+          value: {{.Values.virtualNode.HTTPProxies.HTTPs}}
         {{- end }}
         volumeMounts:
         - name: config
@@ -130,7 +131,7 @@ spec:
         {{- end }}
         {{- if .Values.virtualNode.network.enableTunnel }}
         - name: wstunnel-template
-          mountPath: {{ .Values.virtualNode.network.wstunnelTemplatePath | default "/etc/templates/wstunnel.yaml" }}
+          mountPath: {{.Values.virtualNode.network.wstunnelTemplatePath | default "/etc/templates/wstunnel.yaml"}}
           subPath: wstunnel.yaml
           readOnly: true
         {{- end }}
@@ -139,25 +140,25 @@ spec:
         {{- end }}
       {{- if .Values.OAUTH.enabled }}
       - name: refresh-token
-        image: "{{ .Values.OAUTH.image }}"
+        image: "{{.Values.OAUTH.image}}"
         imagePullPolicy: Always
         env:
-        - name: IAM_TOKEN_ENDPOINT 
-          value: {{.Values.OAUTH.TokenURL}} 
+        - name: IAM_TOKEN_ENDPOINT
+          value: {{.Values.OAUTH.TokenURL}}
         # TODO load env IAM client from secret
         - name: IAM_CLIENT_ID
           value: {{.Values.OAUTH.ClientID}}
         - name: IAM_CLIENT_SECRET
-          value: {{.Values.OAUTH.ClientSecret}} 
+          value: {{.Values.OAUTH.ClientSecret}}
         - name: IAM_REFRESH_TOKEN
           value: {{.Values.OAUTH.RefreshToken}}
         - name: IAM_VK_AUD
           value: {{.Values.OAUTH.Audience}}
-        - name: IAM_GRANT_TYPE 
+        - name: IAM_GRANT_TYPE
           value: {{.Values.OAUTH.GrantType}}
         - name: TOKEN_PATH
           value: /opt/interlink/token
-        command: 
+        command:
         - python3
         - /opt/refresh.py
         resources:
@@ -176,18 +177,18 @@ spec:
       {{- end }}
       {{- if .Values.sshBastion.enabled }}
       - name: ssh-bastion
-        image: "{{ .Values.sshBastion.image }}"
+        image: "{{.Values.sshBastion.image}}"
         imagePullPolicy: Always
         ports:
         - containerPort: 2222
         - containerPort: 22
         env:
         - name: PUBLIC_KEY_FILE
-          value: /opt/ssh/authorized_keys 
+          value: /opt/ssh/authorized_keys
         - name: USER_NAME
-          value: interlink 
+          value: interlink
         - name: PUBLIC_KEY_URL
-          value: {{.Values.sshBastion.clientKeys.keysURL }}
+          value: {{.Values.sshBastion.clientKeys.keysURL}}
         - name: DOCKER_MODS
           value: linuxserver/mods:openssh-server-ssh-tunnel
         - name: SHELL_NOLOGIN
@@ -207,17 +208,17 @@ spec:
       volumes:
       - name: config
         configMap:
-          name: {{ .Values.nodeName }}-virtual-kubelet-config
+          name: {{.Values.nodeName}}-virtual-kubelet-config
       {{- with .Values.extraVolumes }}
       {{- toYaml . | nindent 6 }}
       {{- end }}
       {{- if .Values.sshBastion.enabled }}
       - name: ssh-keys
         secret:
-          secretName: {{.Values.nodeName }}-ssh-keys 
+          secretName: {{.Values.nodeName}}-ssh-keys
       - name: sshd-config
         configMap:
-          name: "{{ .Values.nodeName }}-sshd-config"
+          name: "{{.Values.nodeName}}-sshd-config"
       {{- end }}
       {{- if .Values.OAUTH.enabled }}
       - name: token
@@ -226,12 +227,12 @@ spec:
       {{- if .Values.interlink.enabled }}
       - name: il-config
         configMap:
-          name: {{ .Values.nodeName }}-interlink-config
+          name: {{.Values.nodeName}}-interlink-config
       {{- end }}
       {{- if .Values.plugin.enabled }}
       - name: plugin-config
         configMap:
-          name: {{ .Values.nodeName }}-plugin-config
+          name: {{.Values.nodeName}}-plugin-config
       {{- end }}
       {{- if or .Values.interlink.socket .Values.plugin.socket }}
       - name: sockets
@@ -240,13 +241,13 @@ spec:
       {{- if .Values.interlink.tls.enabled }}
       - name: tls-certs
         secret:
-          secretName: {{ .Values.nodeName }}-tls-certs
+          secretName: {{.Values.nodeName}}-tls-certs
           optional: true
       {{- end }}
       {{- if .Values.virtualNode.network.enableTunnel }}
       - name: wstunnel-template
         configMap:
-          name: {{ .Values.nodeName }}-wstunnel-template
+          name: {{.Values.nodeName}}-wstunnel-template
       {{- end }}
 
 {{- if .Values.sshBastion.enabled }}
@@ -255,31 +256,31 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: {{.Values.nodeName }}-ssh-keys
-  namespace: {{ .Release.Namespace }}
+  namespace: {{.Release.Namespace}}
 type: Opaque
 data:
-  authorized_keys: {{ .Values.sshBastion.clientKeys.authorizedKeys | b64enc }}
+  authorized_keys: {{.Values.sshBastion.clientKeys.authorizedKeys | b64enc}}
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: ssh-bastion-{{ .Release.Name }}
-  namespace: {{ .Release.Namespace }}
+  name: ssh-bastion-{{.Release.Name}}
+  namespace: {{.Release.Namespace}}
 spec:
   type: NodePort
   ports:
-  - port: 2222 
-    nodePort: {{ .Values.sshBastion.port }}
+  - port: 2222
+    nodePort: {{.Values.sshBastion.port}}
   selector:
-    app: {{ .Values.nodeName }}
+    app: {{.Values.nodeName}}
 
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: "{{ .Values.nodeName }}-sshd-config"
-  namespace: {{ .Release.Namespace }}
+  name: "{{.Values.nodeName}}-sshd-config"
+  namespace: {{.Release.Namespace}}
 data:
   sshd_config: |
     #PermitOpen /config/sockets/plugin.sock
