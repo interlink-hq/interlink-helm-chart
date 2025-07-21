@@ -11,7 +11,7 @@ contribute are also welcome.
 ## Feedback and Questions
 
 If you wish to discuss anything related to the project, please open a
-[GitHub issue](https://github.com/interTwin-eu/REPOSITORY/issues/new).
+[GitHub issue](https://github.com/interTwin-eu/interlink-helm-chart/issues/new).
 
 ## Contribution Process
 

@@ -1,10 +1,13 @@
-# WST unnel Template Guide
+# WSTunnel Template Guide
 
-This guide explains how to customize the wstunnel template for different networking scenarios.
+This guide explains how to customize the wstunnel template for different
+networking scenarios.
 
 ## Overview
 
-The interLink Helm chart includes wstunnel support for creating network tunnels. By default, it uses an Ingress-based template, but you can provide custom templates for different deployment scenarios.
+The interLink Helm chart includes wstunnel support for creating network
+tunnels. By default, it uses an Ingress-based template, but you can provide
+custom templates for different deployment scenarios.
 
 ## Configuration
 
@@ -37,6 +40,7 @@ The template supports these variables that will be populated by the interLink so
 ## Default Template
 
 The default template (Traefik-based) includes:
+
 - Deployment with wstunnel container
 - ClusterIP Service
 - Ingress with Traefik configuration
@@ -79,7 +83,9 @@ virtualNode:
           spec:
             containers:
             - args:
-              - ./wstunnel server --log-lvl DEBUG --dns-resolver-prefer-ipv4 --restrict-http-upgrade-path-prefix {{.RandomPassword}} ws://0.0.0.0:8080
+              - ./wstunnel server --log-lvl DEBUG --dns-resolver-prefer-ipv4
+                --restrict-http-upgrade-path-prefix {{.RandomPassword}}
+                ws://0.0.0.0:8080
               command:
               - bash
               - -c
@@ -172,7 +178,8 @@ virtualNode:
     customTemplate: ""
 ```
 
-The default template includes Traefik middleware for WebSocket support and optional IngressRoute configuration.
+The default template includes Traefik middleware for WebSocket support and
+optional IngressRoute configuration.
 
 ### NodePort Service (No Ingress)
 
@@ -200,7 +207,9 @@ virtualNode:
           spec:
             containers:
             - args:
-              - wstunnel server --log-lvl DEBUG --dns-resolver-prefer-ipv4 --restrict-http-upgrade-path-prefix {{.RandomPassword}} ws://0.0.0.0:8080
+              - wstunnel server --log-lvl DEBUG --dns-resolver-prefer-ipv4
+                --restrict-http-upgrade-path-prefix {{.RandomPassword}}
+                ws://0.0.0.0:8080
               command:
               - bash
               - -c
@@ -323,7 +332,8 @@ virtualNode:
 1. Choose the appropriate template for your environment
 2. Update your `values.yaml` with the custom template
 3. Deploy with: `helm install virtual-node ./interlink --values values.yaml`
-4. The wstunnel template will be mounted at the configured path in the virtual kubelet container
+4. The wstunnel template will be mounted at the configured path in the
+   virtual kubelet container
 
 ## Troubleshooting
 
