@@ -30,7 +30,8 @@ The official Helm chart for deploying [interLink](https://github.com/interTwin-e
 
 ```bash
 # Add the repository
-helm repo add interlink https://intertwin-eu.github.io/interlink-helm-chart/
+# Will be available once published:
+# helm repo add interlink https://intertwin-eu.github.io/interlink-helm-chart/
 
 # Update repositories
 helm repo update
@@ -336,8 +337,9 @@ For detailed contribution guidelines, see [CONTRIBUTING.md](./CONTRIBUTING.md).
 - [interLink Documentation](https://interlink-project.dev/docs/intro)
 - [Official Cookbook](https://interlink-project.dev/docs/intro)
 - [GitHub Repository](https://github.com/interTwin-eu/interlink-helm-chart)
-- [Chart Repository](https://intertwin-eu.github.io/interlink-helm-chart/)
+- [Chart Repository](https://github.com/interTwin-eu/interlink-helm-chart) (GitHub Pages coming soon)
 
 ## License
 
-This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details. 
+This project is licensed under the Apache License 2.0 - see the
+[LICENSE](LICENSE) file for details.
