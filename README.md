@@ -3,7 +3,11 @@
 [![Chart Version](https://img.shields.io/badge/dynamic/yaml?color=blue&label=chart&query=version&url=https%3A//raw.githubusercontent.com/interTwin-eu/interlink-helm-chart/main/interlink/Chart.yaml)](https://github.com/interTwin-eu/interlink-helm-chart)
 [![App Version](https://img.shields.io/badge/dynamic/yaml?color=green&label=app&query=appVersion&url=https%3A//raw.githubusercontent.com/interTwin-eu/interlink-helm-chart/main/interlink/Chart.yaml)](https://github.com/interTwin-eu/interlink-helm-chart)
 
-The official Helm chart for deploying [interLink](https://github.com/interTwin-eu/interLink) virtual nodes in Kubernetes clusters. interLink enables hybrid cloud deployments by creating virtual nodes that can execute workloads on remote computing resources while appearing as regular nodes to the Kubernetes scheduler.
+The official Helm chart for deploying
+[interLink](https://github.com/interTwin-eu/interLink) virtual nodes in
+Kubernetes clusters. interLink enables hybrid cloud deployments by creating
+virtual nodes that can execute workloads on remote computing resources while
+appearing as regular nodes to the Kubernetes scheduler.
 
 ## Table of Contents
 
@@ -37,13 +41,16 @@ The official Helm chart for deploying [interLink](https://github.com/interTwin-e
 helm repo update
 
 # Install with custom values
-helm install --create-namespace -n interlink virtual-node interlink/interlink --values my-values.yaml
+helm install --create-namespace -n interlink virtual-node \
+  interlink/interlink --values my-values.yaml
 ```
 
 ### From OCI Registry (Alternative)
 
 ```bash
-helm install --create-namespace -n interlink virtual-node oci://ghcr.io/intertwin-eu/interlink-helm-chart/interlink --values my-values.yaml
+helm install --create-namespace -n interlink virtual-node \
+  oci://ghcr.io/intertwin-eu/interlink-helm-chart/interlink \
+  --values my-values.yaml
 ```
 
 ### Local Development
@@ -51,14 +58,16 @@ helm install --create-namespace -n interlink virtual-node oci://ghcr.io/intertwi
 ```bash
 git clone https://github.com/interTwin-eu/interlink-helm-chart.git
 cd interlink-helm-chart
-helm install --create-namespace -n interlink virtual-node ./interlink --values my-values.yaml
+helm install --create-namespace -n interlink virtual-node \
+  ./interlink --values my-values.yaml
 ```
 
 ## Deployment Modes
 
 ### 1. Edge-node Service (REST Communication)
 
-**Architecture**: Virtual kubelet + OAuth2 token refresher in cluster, plugin + interLink API server + OAuth2 proxy on remote side.
+**Architecture**: Virtual kubelet + OAuth2 token refresher in cluster,
+plugin + interLink API server + OAuth2 proxy on remote side.
 
 **Use Case**: Secure communication over HTTPS with OAuth2 authentication.
 
@@ -87,7 +96,8 @@ virtualNode:
 
 ### 2. Edge-node with Socket (SSH Communication)
 
-**Architecture**: interLink + virtual kubelet + SSH bastion in cluster, only plugin on remote side.
+**Architecture**: interLink + virtual kubelet + SSH bastion in cluster,
+only plugin on remote side.
 
 **Use Case**: Secure communication via SSH tunnels using Unix sockets.
 
@@ -117,9 +127,11 @@ virtualNode:
 
 ### 3. In-cluster Mode
 
-**Architecture**: All components (virtual kubelet, interLink, plugin) deployed in cluster with socket communication.
+**Architecture**: All components (virtual kubelet, interLink, plugin)
+deployed in cluster with socket communication.
 
-**Use Case**: Testing, development, or when remote resources support direct API access.
+**Use Case**: Testing, development, or when remote resources support
+direct API access.
 
 ```yaml
 # values-incluster.yaml
@@ -152,7 +164,7 @@ virtualNode:
 | Parameter | Description | Default |
 |-----------|-------------|---------|
 | `nodeName` | Name of the virtual node | `virtual-node` |
-| `virtualNode.image` | Virtual kubelet image | `ghcr.io/interlink-hq/interlink/virtual-kubelet-inttw:latest` |
+| `virtualNode.image` | Virtual kubelet image | `ghcr.io/interlink-hq/`<br>`interlink/virtual-kubelet-inttw:latest` |
 | `virtualNode.resources.CPUs` | Node CPU capacity | `8` |
 | `virtualNode.resources.memGiB` | Node memory capacity in GiB | `49` |
 | `virtualNode.resources.pods` | Maximum pods per node | `100` |
@@ -162,6 +174,7 @@ virtualNode:
 ### Advanced Configuration
 
 #### Accelerators Support
+
 ```yaml
 virtualNode:
   resources:
@@ -175,6 +188,7 @@ virtualNode:
 ```
 
 #### Node Labels and Taints
+
 ```yaml
 virtualNode:
   nodeLabels:
@@ -238,6 +252,7 @@ kubectl get pod test-workload -o wide
 ### Common Issues
 
 #### Virtual Node Not Ready
+
 ```bash
 # Check node conditions
 kubectl describe node <nodeName>
@@ -250,6 +265,7 @@ kubectl logs -n interlink deployment/<nodeName>-node -c interlink
 ```
 
 #### Pod Scheduling Issues
+
 ```bash
 # Check node resources
 kubectl describe node <nodeName>
@@ -262,6 +278,7 @@ kubectl logs -n kube-system deployment/kube-scheduler
 ```
 
 #### Authentication Problems (REST mode)
+
 ```bash
 # Check OAuth token refresh
 kubectl logs -n interlink deployment/<nodeName>-node -c refresh-token
@@ -271,6 +288,7 @@ kubectl exec -n interlink deployment/<nodeName>-node -c vk -- cat /opt/interlink
 ```
 
 #### SSH Connection Issues (Socket mode)
+
 ```bash
 # Check SSH bastion logs
 kubectl logs -n interlink deployment/<nodeName>-node -c ssh-bastion
@@ -282,6 +300,7 @@ kubectl exec -n interlink deployment/<nodeName>-node -c ssh-bastion -- ssh -T in
 ### Debug Mode
 
 Enable verbose logging:
+
 ```yaml
 virtualNode:
   debug: true
@@ -290,6 +309,7 @@ virtualNode:
 ### Health Checks
 
 The chart includes readiness and liveness probes. Check their status:
+
 ```bash
 kubectl get pods -n interlink -o wide
 kubectl describe pod <pod-name> -n interlink
@@ -297,7 +317,7 @@ kubectl describe pod <pod-name> -n interlink
 
 ## Development
 
-### Local Development
+### Chart Development
 
 ```bash
 # Lint the chart
@@ -330,14 +350,16 @@ chartpress --reset
 4. Test thoroughly
 5. Submit a pull request
 
-For detailed contribution guidelines, see [CONTRIBUTING.md](./CONTRIBUTING.md).
+For detailed contribution guidelines, see
+[CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ## Resources
 
 - [interLink Documentation](https://interlink-project.dev/docs/intro)
 - [Official Cookbook](https://interlink-project.dev/docs/intro)
 - [GitHub Repository](https://github.com/interTwin-eu/interlink-helm-chart)
-- [Chart Repository](https://github.com/interTwin-eu/interlink-helm-chart) (GitHub Pages coming soon)
+- [Chart Repository](https://github.com/interTwin-eu/interlink-helm-chart)
+  (GitHub Pages coming soon)
 
 ## License
 
