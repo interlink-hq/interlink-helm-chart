@@ -79,4 +79,4 @@ Key configuration sections in `values.yaml`:
 ### Chart Versioning
 - Chart version is managed by chartpress and set to "TO_BE_CHANGED" in development
 - Base version for development releases is "0.0.1-0.dev"
-- Chart is published to GitHub Pages at https://intertwin-eu.github.io/interlink-helm-chart/
+- Chart will be published to GitHub Pages at https://intertwin-eu.github.io/interlink-helm-chart/

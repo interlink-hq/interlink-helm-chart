@@ -333,8 +333,8 @@ For detailed contribution guidelines, see [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ## Resources
 
-- [interLink Documentation](https://intertwin-eu.github.io/interLink/)
-- [Official Cookbook](https://intertwin-eu.github.io/interLink/docs/cookbook)
+- [interLink Documentation](https://interlink-project.dev/docs/intro)
+- [Official Cookbook](https://interlink-project.dev/docs/intro)
 - [GitHub Repository](https://github.com/interTwin-eu/interlink-helm-chart)
 - [Chart Repository](https://intertwin-eu.github.io/interlink-helm-chart/)
 
