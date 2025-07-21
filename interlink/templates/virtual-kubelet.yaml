@@ -128,6 +128,12 @@ spec:
           mountPath: /etc/vk/certs
           readOnly: true
         {{- end }}
+        {{- if .Values.virtualNode.network.enableTunnel }}
+        - name: wstunnel-template
+          mountPath: {{ .Values.virtualNode.network.wstunnelTemplatePath | default "/etc/templates/wstunnel.yaml" }}
+          subPath: wstunnel.yaml
+          readOnly: true
+        {{- end }}
         {{- with .Values.virtualNode.extraVolumeMounts }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -236,6 +242,11 @@ spec:
         secret:
           secretName: {{ .Values.nodeName }}-tls-certs
           optional: true
+      {{- end }}
+      {{- if .Values.virtualNode.network.enableTunnel }}
+      - name: wstunnel-template
+        configMap:
+          name: {{ .Values.nodeName }}-wstunnel-template
       {{- end }}
 
 {{- if .Values.sshBastion.enabled }}

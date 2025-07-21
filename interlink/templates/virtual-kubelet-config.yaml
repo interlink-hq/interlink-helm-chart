@@ -66,6 +66,12 @@ data:
         Value: "{{ .value }}"
         Effect: "{{ .effect }}"
       {{- end }}
+    Network:
+      EnableTunnel: {{ .Values.virtualNode.network.enableTunnel | default false }}
+      TunnelImage: {{ .Values.virtualNode.network.tunnelImage | default "ghcr.io/erebe/wstunnel:latest" | quote }}
+      WildcardDNS: {{ .Values.virtualNode.network.wildcardDNS | default "" | quote }}
+      WstunnelTemplatePath: {{ .Values.virtualNode.network.wstunnelTemplatePath | default "/etc/templates/wstunnel.yaml" | quote }}
+      WstunnelCommand: {{ .Values.virtualNode.network.wstunnelCommand | quote }}
 ---
 {{- if .Values.interlink.enabled }}
 apiVersion: v1
@@ -110,6 +116,25 @@ data:
     {{- if .Values.interlink.jobScript }}
     {{.Values.interlink.jobScript }}
     {{- end }}
+{{- end }}
+---
+{{- if .Values.virtualNode.network.enableTunnel }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "{{ .Values.nodeName }}-wstunnel-template"
+  namespace: {{ .Release.Namespace }}
+data:
+  wstunnel.yaml: |
+{{- if .Values.virtualNode.network.customTemplate }}
+{{ .Values.virtualNode.network.customTemplate | indent 4 }}
+{{- else if eq .Values.virtualNode.network.templateType "nginx" }}
+{{ .Files.Get "wstunnel-template_nginx.yaml" | indent 4 }}
+{{- else if eq .Values.virtualNode.network.templateType "traefik" }}
+{{ .Files.Get "wstunnel-template_traefik.yaml" | indent 4 }}
+{{- else }}
+{{ .Files.Get "wstunnel-template_nginx.yaml" | indent 4 }}
+{{- end }}
 {{- end }}
 ---
 {{- if .Values.plugin.enabled }}

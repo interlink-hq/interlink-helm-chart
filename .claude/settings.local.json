@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:api.github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(helm lint:*)",
+      "Bash(gh run view:*)",
+      "Bash(helm template:*)",
+      "Bash(gh run list:*)",
+      "Bash(ls:*)",
+      "Bash(find:*)",
+      "Bash(~/bin/ct lint:*)",
+      "Bash(curl:*)",
+      "Bash(tar:*)",
+      "Bash(sudo mv:*)",
+      "Bash(rm:*)"
+    ],
+    "deny": []
+  }
+}
