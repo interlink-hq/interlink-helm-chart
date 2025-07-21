@@ -91,6 +91,23 @@ virtualNode:
   # # Indicate endpoint for JobScript translator
   # JobScriptBuilderURL: "https://test.translator.com/podtranslate"
 
+  # Network tunnel configuration for wstunnel
+  network:
+    # Enable tunnel feature (creates wstunnel template ConfigMap)
+    enableTunnel: false
+    # Container image for wstunnel
+    tunnelImage: "ghcr.io/erebe/wstunnel:latest"
+    # DNS domain for ingress (e.g., "example.com")
+    wildcardDNS: ""
+    # Path where wstunnel template will be mounted in VK container
+    wstunnelTemplatePath: "/etc/templates/wstunnel.yaml"
+    # Template type: "nginx" (default) or "traefik"
+    templateType: ""
+    # Custom wstunnel template content (optional, overrides templateType if set)
+    customTemplate: ""
+    wstunnelCommand: |
+      curl -L https://github.com/erebe/wstunnel/releases/download/v10.4.4/wstunnel_10.4.4_linux_amd64.tar.gz -o wstunnel.tar.gz && tar -xzvf wstunnel.tar.gz && chmod +x wstunnel\\n\\n./wstunnel client --http-upgrade-path-prefix %s %s ws://%s:80
+
 plugin:
   enabled: false
   image: ""

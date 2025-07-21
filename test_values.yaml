@@ -1,0 +1,142 @@
+---
+USER-SUPPLIED VALUES:
+extraVolumes:
+  - hostPath:
+      path: /tmp/test
+      type: DirectoryOrCreate
+    name: plugin-data
+interlink:
+  image: ghcr.io/interlink-hq/interlink/interlink:0.5.2-pre1
+  address: http://localhost
+  enabled: true
+  logging:
+    verboseLogging: true
+  port: 3000
+  socket: unix:///var/run/interlink.sock
+nodeName: interlink-hammer
+plugin:
+  address: http://localhost
+  config: |
+    #Socket: "unix:///var/run/plugin.sock"
+    ImagePrefix: "docker://"
+    SidecarPort: 4000
+    VerboseLogging: true
+    ErrorsOnlyLogging: false
+    # NEEDED PATH FOR GITHUB ACTIONS
+    #DataRootFolder: "/home/runner/work/interLink/interLink/.interlink/"
+    # on your host use something like:
+    DataRootFolder: "/slurm-data/"
+    ExportPodData: true
+    SbatchPath: "/usr/bin/sbatch"
+    ScancelPath: "/usr/bin/scancel"
+    SqueuePath: "/usr/bin/squeue"
+    CommandPrefix: ""
+    SingularityPrefix: ""
+    Namespace: "vk"
+    Tsocks: false
+    TsocksPath: "$WORK/tsocks-1.8beta5+ds1/libtsocks.so"
+    TsocksLoginNode: "login01"
+    BashPath: /bin/bash
+  enabled: true
+  envs:
+    - name: SLURMCONFIGPATH
+      value: /etc/interlink/plugin.yaml
+    - name: SHARED_FS
+      values: "true"
+  extraVolumeMounts:
+    - mountPath: /slurm-data
+      name: plugin-data
+  # image: >
+  #   ghcr.io/interlink-hq/interlink-sidecar-slurm/
+  #   interlink-sidecar-slurm:0.5.2-pre2
+  image: >
+    ghcr.io/interlink-hq/interlink-sidecar-slurm/interlink-sidecar-slurm:0.5.2-pre2
+  port: 4000
+  privileged: true
+virtualNode:
+  # image: ghcr.io/interlink-hq/interlink/virtual-kubelet-inttw:0.5.2-pre1
+  image: dciangot/vk:0.5.6
+  resources:
+    CPUs: 4
+    memGiB: 16
+    pods: 50
+  network:
+    # Enable tunnel feature (creates wstunnel template ConfigMap)
+    enableTunnel: true
+    # Container image for wstunnel
+    tunnelImage: "ghcr.io/erebe/wstunnel:latest"
+    # DNS domain for ingress (e.g., "example.com")
+    wildcardDNS: "example.com"
+    # Path where wstunnel template will be mounted in VK container
+    wstunnelTemplatePath: "/etc/templates/wstunnel.yaml"
+    # Custom wstunnel template content (optional, uses built-in template
+    # if empty)
+    customTemplate: ""
+    # customTemplate: |
+    #   apiVersion: apps/v1
+    #   kind: Deployment
+    #   metadata:
+    #     name: {{.Name}}
+    #     namespace: {{.Namespace}}
+    #   spec:
+    #     replicas: 1
+    #     selector:
+    #       matchLabels:
+    #         app.kubernetes.io/component: {{.Name}}
+    #     template:
+    #       metadata:
+    #         labels:
+    #           app.kubernetes.io/component: {{.Name}}
+    #       spec:
+    #         containers:
+    #         - args:
+    #           - >
+    #             wstunnel server --log-lvl DEBUG --dns-resolver-prefer-ipv4
+    #             --restrict-http-upgrade-path-prefix {{.RandomPassword}}
+    #             ws://0.0.0.0:8080
+    #           command:
+    #           - bash
+    #           - -c
+    #           image: ghcr.io/erebe/wstunnel:latest
+    #           imagePullPolicy: IfNotPresent
+    #           name: wstunnel
+    #           ports:
+    #           - containerPort: 8080
+    #             name: websocket
+    #             protocol: TCP
+    #           {{- range .ExposedPorts}}
+    #           - containerPort: {{.Port}}
+    #             name: {{.Name}}
+    #             protocol: {{.Protocol}}
+    #           {{- end}}
+    #           resources:
+    #             requests:
+    #               cpu: 100m
+    #               memory: 90Mi
+    #         nodeSelector:
+    #           kubernetes.io/os: linux
+    #   ---
+    #   apiVersion: v1
+    #   kind: Service
+    #   metadata:
+    #     name: {{.Name}}
+    #     namespace: {{.Namespace}}
+    #   spec:
+    #     type: NodePort
+    #     selector:
+    #       app.kubernetes.io/component: {{.Name}}
+    #     ports:
+    #       - port: 8080
+    #         targetPort: 8080
+    #         name: ws
+    #         nodePort: 30080
+    #       {{- range .ExposedPorts}}
+    #       - port: {{.Port}}
+    #         targetPort: {{.TargetPort}}
+    #         name: {{.Name}}
+    #         {{- if .Protocol}}
+    #         protocol: {{.Protocol}}
+    #         {{- end}}
+    #       {{- end}}
+    #
+    #
