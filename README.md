@@ -164,7 +164,7 @@ virtualNode:
 | Parameter | Description | Default |
 |-----------|-------------|---------|
 | `nodeName` | Name of the virtual node | `virtual-node` |
-| `virtualNode.image` | Virtual kubelet image | `ghcr.io/interlink-hq/`<br>`interlink/virtual-kubelet-inttw:latest` |
+| `virtualNode.image` | Virtual kubelet image | `ghcr.io/interlink-hq/interlink/virtual-kubelet-inttw:latest` |
 | `virtualNode.resources.CPUs` | Node CPU capacity | `8` |
 | `virtualNode.resources.memGiB` | Node memory capacity in GiB | `49` |
 | `virtualNode.resources.pods` | Maximum pods per node | `100` |
@@ -204,8 +204,10 @@ virtualNode:
 
 Complete examples are available in the [`examples/`](./interlink/examples/) directory:
 
-- [`edge_with_rest.yaml`](./interlink/examples/edge_with_rest.yaml) - REST communication setup
-- [`edge_with_socket.yaml`](./interlink/examples/edge_with_socket.yaml) - Socket communication setup
+- [`edge_with_rest.yaml`](./interlink/examples/edge_with_rest.yaml) -
+  REST communication setup
+- [`edge_with_socket.yaml`](./interlink/examples/edge_with_socket.yaml) -
+  Socket communication setup
 
 ## Post-Installation
 
@@ -332,7 +334,8 @@ helm install --dry-run --debug virtual-node ./interlink --values my-values.yaml
 
 ### Chart Versioning
 
-This chart uses [chartpress](https://github.com/jupyterhub/chartpress) for automated versioning:
+This chart uses [chartpress](https://github.com/jupyterhub/chartpress) for
+automated versioning:
 
 ```bash
 # Update version and publish
