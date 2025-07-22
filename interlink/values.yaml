@@ -36,6 +36,11 @@ interlink:
   pluginEndpoint:
     url: ""
     port: ""
+  # Extra volume mounts for the interlink container
+  extraVolumeMounts: []
+    # - name: data-root
+    #   mountPath: /data
+    #   readOnly: false
   # # Enable job script translation from outside service
   # jobScript:
   #   JobScriptBuildConfig:
@@ -44,19 +49,19 @@ interlink:
   #     volume_options: {}
 
 virtualNode:
-  image: ghcr.io/interlink-hq/interlink/virtual-kubelet-inttw:latest 
+  image: ghcr.io/interlink-hq/interlink/virtual-kubelet-inttw:latest
   resources:
     CPUs: 8
     memGiB: 49
     pods: 100
     # add accelerators to the virtual node
-    #accelerators:
+    # accelerators:
     # fpga example
-    #- resourceType: xilinx.com/fpga
+    # - resourceType: xilinx.com/fpga
     #  model: u55c
     #  available: 1
     # gpu example
-    #- resourceType: nvidia.com/gpu
+    # - resourceType: nvidia.com/gpu
     #  model: a100
     #  available: 1
     # podCIDR:
@@ -75,19 +80,41 @@ virtualNode:
   tracing:
     enabled: false
   # uncomment to enable custom nodeSelector and nodeTaints
-  #nodeLabels:
+  # nodeLabels:
   #  - "accelerator=a100"
-  #nodeTaints:
+  # nodeTaints:
   #  - key: "accelerator"
   #    value: "a100"
   #    effect: "NoSchedule"
+  # Extra volume mounts for the virtual kubelet container
+  extraVolumeMounts: []
+    # - name: data-root
+    #   mountPath: /data
+    #   readOnly: false
 
   # # Indicate endpoint for JobScript translator
   # JobScriptBuilderURL: "https://test.translator.com/podtranslate"
 
+  # Network tunnel configuration for wstunnel
+  network:
+    # Enable tunnel feature (creates wstunnel template ConfigMap)
+    enableTunnel: false
+    # Container image for wstunnel
+    tunnelImage: "ghcr.io/erebe/wstunnel:latest"
+    # DNS domain for ingress (e.g., "example.com")
+    wildcardDNS: ""
+    # Path where wstunnel template will be mounted in VK container
+    wstunnelTemplatePath: "/etc/templates/wstunnel.yaml"
+    # Template type: "nginx" (default) or "traefik"
+    templateType: ""
+    # Custom wstunnel template content (optional, overrides templateType if set)
+    customTemplate: ""
+    wstunnelCommand: |
+      curl -L https://github.com/erebe/wstunnel/releases/download/v10.4.4/wstunnel_10.4.4_linux_amd64.tar.gz -o wstunnel.tar.gz && tar -xzvf wstunnel.tar.gz && chmod +x wstunnel\\n\\n./wstunnel client --http-upgrade-path-prefix %s %s ws://%s:80
+
 plugin:
   enabled: false
-  image: "" 
+  image: ""
   command: []
   args: []
   # content of the "config" will be mounted as /etc/interlink/plugin.yaml
@@ -99,10 +126,17 @@ plugin:
   # if socket is specified, the address/port are ignored
   address: ""
   port: 3000
+  # Run plugin container with privileged permissions
+  privileged: false
+  # Extra volume mounts for the plugin container
+  extraVolumeMounts: []
+    # - name: data-root
+    #   mountPath: /data
+    #   readOnly: false
 
 sshBastion:
   enabled: false
-  image: lscr.io/linuxserver/openssh-server:latest 
+  image: lscr.io/linuxserver/openssh-server:latest
   clientKeys:
     authorizedKeys: ""
     keysURL: ""
@@ -110,7 +144,11 @@ sshBastion:
     priv: ""
     pub: ""
   port: 31022
-    
+  # Extra volume mounts for the SSH bastion container
+  extraVolumeMounts: []
+    # - name: data-root
+    #   mountPath: /data
+    #   readOnly: false
 # disable OAUTH when using sockets for communication in the in-cluster mode
 OAUTH:
   enabled: false
@@ -121,6 +159,11 @@ OAUTH:
   RefreshToken: DUMMY
   GrantType: authorization_code
   Audience: DUMMY
+  # Extra volume mounts for the OAuth refresh token container
+  extraVolumeMounts: []
+    # - name: data-root
+    #   mountPath: /data
+    #   readOnly: false
 
 # define extra volumes (e.g. for DataRootVolume)
 extraVolumes: []
@@ -128,3 +171,20 @@ extraVolumes: []
   #   hostPath:
   #     path: /scratch/interlink/
   #     type: DirectoryOrCreate
+
+# Pod scheduling configuration
+podScheduling:
+  # Node selector for the interlink pod
+  nodeSelector: {}
+    # kubernetes.io/hostname: specific-node
+    # node-type: worker
+
+  # Tolerations for the interlink pod
+  tolerations: []
+    # - key: "node-type"
+    #   operator: "Equal"
+    #   value: "gpu"
+    #   effect: "NoSchedule"
+    # - key: "dedicated"
+    #   operator: "Exists"
+    #   effect: "NoSchedule"

@@ -62,11 +62,21 @@ metadata:
 spec:
   nodeSelector:
     kubernetes.io/hostname: {{ .Values.nodeName }}
+  tolerations:
+    - key: virtual-node.interlink/no-schedule
+      operator: Exists
   containers:
   - name: test
     image: busybox:1.35
     command: ["sh", "-c"]
     args: ["echo 'Hello from virtual node {{ .Values.nodeName }}!' && sleep 300"]
+    resources:
+      requests:
+        memory: "100M"
+        cpu: "250m"
+      limits:
+        memory: "200M"
+        cpu: "1"
   restartPolicy: Never
 EOF
 

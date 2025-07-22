@@ -1,8 +1,9 @@
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: "{{ .Values.nodeName }}-virtual-kubelet-config"
-  namespace: {{ .Release.Namespace }}
+  name: "{{.Values.nodeName}}-virtual-kubelet-config"
+  namespace: {{.Release.Namespace}}
 data:
   InterLinkConfig.yaml: |
     {{- if .Values.interlink.socket }}
@@ -20,7 +21,7 @@ data:
     {{- end }}
     {{- if .Values.interlink.kubernetesApiCaCrt }}
     KubernetesApiCaCrt: |
-{{.Values.interlink.kubernetesApiCaCrt | indent 6 }}
+      {{.Values.interlink.kubernetesApiCaCrt | indent 6}}
     {{- end }}
     {{- if .Values.interlink.disableProjectedVolumes }}
     DisableProjectedVolumes: {{.Values.interlink.disableProjectedVolumes }}
@@ -29,11 +30,14 @@ data:
     JobScriptBuilderURL: {{.Values.virtualNode.JobScriptBuilderURL }}
     {{- end }}
     ExportPodData: {{ .Values.interlink.exportPodData }}
-    VerboseLogging: {{ .Values.interlink.logging.verboseLogging | default true }}
-    ErrorsOnlyLogging: {{ .Values.interlink.logging.errorsOnlyLogging | default false }}
+    VerboseLogging: >
+      {{.Values.interlink.logging.verboseLogging | default true}}
+    ErrorsOnlyLogging: >
+      {{.Values.interlink.logging.errorsOnlyLogging | default false}}
     ServiceAccount: "{{ .Values.nodeName }}"
     Namespace: "{{ .Release.Namespace }}"
-    VKTokenFile: {{ .Values.OAUTH.enabled | ternary "/opt/interlink/token" "/dev/null" }}
+    VKTokenFile: >
+      {{.Values.OAUTH.enabled | ternary "/opt/interlink/token" "/dev/null"}}
     {{- if .Values.interlink.tls.enabled }}
     TLS:
       Enabled: {{ .Values.interlink.tls.enabled }}
@@ -72,13 +76,25 @@ data:
         Value: "{{ .value }}"
         Effect: "{{ .effect }}"
       {{- end }}
+    Network:
+      EnableTunnel: >
+        {{.Values.virtualNode.network.enableTunnel | default false}}
+      TunnelImage: >
+        {{.Values.virtualNode.network.tunnelImage |
+        default "ghcr.io/erebe/wstunnel:latest" | quote}}
+      WildcardDNS: >
+        {{.Values.virtualNode.network.wildcardDNS | default "" | quote}}
+      WstunnelTemplatePath: >
+        {{.Values.virtualNode.network.wstunnelTemplatePath |
+        default "/etc/templates/wstunnel.yaml" | quote}}
+      WstunnelCommand: {{ .Values.virtualNode.network.wstunnelCommand | quote }}
+{{- if .Values.interlink.enabled}}
 ---
-{{- if .Values.interlink.enabled }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: "{{ .Values.nodeName }}-interlink-config"
-  namespace: {{ .Release.Namespace }}
+  name: "{{.Values.nodeName}}-interlink-config"
+  namespace: {{.Release.Namespace}}
 data:
   InterLinkConfig.yaml: |
     {{- if .Values.interlink.socket }}
@@ -96,8 +112,10 @@ data:
     SidecarURL: {{ .Values.plugin.address | quote }}
     SidecarPort: {{ .Values.plugin.port | quote }}
     {{- end }}
-    VerboseLogging: {{ .Values.interlink.logging.verboseLogging | default true }}
-    ErrorsOnlyLogging: {{ .Values.interlink.logging.errorsOnlyLogging | default false }}
+    VerboseLogging: >
+      {{.Values.interlink.logging.verboseLogging | default true}}
+    ErrorsOnlyLogging: >
+      {{.Values.interlink.logging.errorsOnlyLogging | default false}}
     {{- if .Values.interlink.tls.enabled }}
     TLS:
       Enabled: {{ .Values.interlink.tls.enabled }}
@@ -116,6 +134,25 @@ data:
     {{- if .Values.interlink.jobScript }}
     {{.Values.interlink.jobScript }}
     {{- end }}
+{{- end }}
+---
+{{- if .Values.virtualNode.network.enableTunnel }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "{{ .Values.nodeName }}-wstunnel-template"
+  namespace: {{ .Release.Namespace }}
+data:
+  wstunnel.yaml: |
+{{- if .Values.virtualNode.network.customTemplate }}
+{{ .Values.virtualNode.network.customTemplate | indent 4 }}
+{{- else if eq .Values.virtualNode.network.templateType "nginx" }}
+{{ .Files.Get "wstunnel-template_nginx.yaml" | indent 4 }}
+{{- else if eq .Values.virtualNode.network.templateType "traefik" }}
+{{ .Files.Get "wstunnel-template_traefik.yaml" | indent 4 }}
+{{- else }}
+{{ .Files.Get "wstunnel-template_nginx.yaml" | indent 4 }}
+{{- end }}
 {{- end }}
 ---
 {{- if .Values.plugin.enabled }}

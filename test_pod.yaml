@@ -1,0 +1,21 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: web-server
+  namespace: default
+  annotations:
+    interlink.virtual-kubelet.io/wstunnel-timeout: "5m"
+spec:
+  nodeSelector:
+    kubernetes.io/hostname: interlink-hammer
+  tolerations:
+    - key: virtual-node.interlink/no-schedule
+      operator: Exists
+  containers:
+    - name: nginx
+      image: nginx:latest
+      ports:
+        - containerPort: 80
+          name: http
+  restartPolicy: Never

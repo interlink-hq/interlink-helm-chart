@@ -1,0 +1,64 @@
+nodeName: test-node
+virtualNode:
+  extraVolumeMounts:
+    - name: data-root
+      mountPath: /data
+      readOnly: false
+
+interlink:
+  enabled: true
+  extraVolumeMounts:
+    - name: shared-data
+      mountPath: /shared
+      readOnly: true
+
+plugin:
+  enabled: true
+  image: ghcr.io/interlink-hq/interlink/plugin-docker:latest
+  privileged: true
+  extraVolumeMounts:
+    - name: plugin-data
+      mountPath: /plugin-data
+
+sshBastion:
+  enabled: true
+  extraVolumeMounts:
+    - name: ssh-data
+      mountPath: /ssh-data
+
+OAUTH:
+  enabled: true
+  extraVolumeMounts:
+    - name: oauth-data
+      mountPath: /oauth-data
+
+podScheduling:
+  nodeSelector:
+    node-type: worker
+    kubernetes.io/arch: amd64
+  tolerations:
+    - key: "dedicated"
+      operator: "Equal"
+      value: "interlink"
+      effect: "NoSchedule"
+    - key: "node-type"
+      operator: "Equal"
+      value: "gpu"
+      effect: "NoExecute"
+
+extraVolumes:
+  - name: data-root
+    hostPath:
+      path: /scratch/data
+      type: DirectoryOrCreate
+  - name: shared-data
+    emptyDir: {}
+  - name: plugin-data
+    configMap:
+      name: plugin-data-config
+  - name: ssh-data
+    secret:
+      secretName: ssh-data-secret
+  - name: oauth-data
+    persistentVolumeClaim:
+      claimName: oauth-data-pvc

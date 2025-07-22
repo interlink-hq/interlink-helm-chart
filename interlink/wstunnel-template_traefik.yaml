@@ -1,0 +1,187 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{.Name}}
+  namespace: {{.Namespace}}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: {{.Name}}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: {{.Name}}
+    spec:
+      containers:
+      - args:
+        - wstunnel server --log-lvl DEBUG --dns-resolver-prefer-ipv4 --restrict-http-upgrade-path-prefix {{.RandomPassword}}  ws://0.0.0.0:8080
+        command:
+        - bash
+        - -c
+        #image: ghcr.io/dciangot/dciangot/wg:v0.2
+        image: ghcr.io/erebe/wstunnel:latest
+        imagePullPolicy: IfNotPresent
+        name: wireguard
+        ports:
+        - containerPort: 8080
+          name: webhook
+          protocol: TCP
+        - containerPort: 51820
+          name: vpn
+          protocol: UDP
+        {{- range .ExposedPorts}}
+        - containerPort: {{.Port}}
+          name: {{.Name}}
+          protocol: {{.Protocol}}
+        {{- end}}
+        resources:
+          requests:
+            cpu: 100m
+            memory: 90Mi
+      nodeSelector:
+        kubernetes.io/os: linux
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{.Name}}
+  namespace: {{.Namespace}}
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/component: {{.Name}}
+  ports:
+    - port: 8080
+      targetPort: 8080
+      name: ws
+    {{- range .ExposedPorts}}
+    - port: {{.Port}}
+      targetPort: {{.TargetPort}}
+      name: {{.Name}}
+      {{- if .Protocol}}
+      protocol: {{.Protocol}}
+      {{- end}}
+    {{- end}}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{.Name}}
+  namespace: {{.Namespace}}
+  annotations:
+    # Traefik equivalent annotations
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    
+    # Apply custom middleware for WebSocket support and headers
+    traefik.ingress.kubernetes.io/router.middlewares: {{.Namespace}}-websocket-headers@kubernetescrd
+    
+    # Ingress class for Traefik
+    kubernetes.io/ingress.class: "traefik"
+spec:
+  rules:
+  - host: ws-{{.Name}}.{{.WildcardDNS}}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: {{.Name}}
+            port:
+              number: 8080
+
+---
+# Traefik Middleware to handle WebSocket connections and custom headers
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: websocket-headers
+  namespace: {{.Namespace}}
+spec:
+  headers:
+    customRequestHeaders:
+      # WebSocket upgrade headers - Traefik handles these automatically
+      # but we include them for compatibility
+      Connection: "upgrade"
+      # Forward real client IP
+      X-Forwarded-For: ""
+      # Preserve original host
+      Host: ""
+      # HTTP version is handled by Traefik automatically
+    customResponseHeaders:
+      # Cache control for WebSocket connections
+      Cache-Control: "no-cache, no-store, must-revalidate"
+
+---
+# Alternative: More comprehensive middleware with all the nginx functionality
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: websocket-headers-comprehensive
+spec:
+  headers:
+    customRequestHeaders:
+      Connection: "upgrade"
+      Upgrade: $http_upgrade
+      X-Forwarded-For: $remote_addr
+      Host: $host
+      # Additional headers for better WebSocket support
+      X-Real-IP: $remote_addr
+      X-Forwarded-Proto: $scheme
+      X-Forwarded-Port: $server_port
+
+---
+# Alternative: Traefik IngressRoute (CRD) - More control and cleaner WebSocket handling
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{.Name}}
+  namespace: {{.Namespace}}
+spec:
+  entryPoints:
+    - web
+    - websecure
+  routes:
+  - match: Host(`ws-{{.Name}}.{{.WildcardDNS}}`)
+    kind: Rule
+    services:
+    - name: {{.Name}}
+      port: 8080
+      # Traefik automatically handles WebSocket upgrades
+      # Configure timeouts at service level
+      responseForwarding:
+        flushInterval: 1ms
+    middlewares:
+    - name: websocket-headers
+  # Optional TLS configuration
+  tls:
+    certResolver: letsencrypt
+
+---
+# Traefik configuration for timeouts (via ConfigMap or static config)
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: traefik-config
+data:
+  traefik.yml: |
+    # Global timeouts
+    serversTransport:
+      responseHeaderTimeout: 3600s
+      dialTimeout: 30s
+    
+    # Entry points
+    entryPoints:
+      web:
+        address: ":80"
+        transport:
+          respondingTimeouts:
+            readTimeout: 3600s
+            writeTimeout: 3600s
+      websecure:
+        address: ":443"
+        transport:
+          respondingTimeouts:
+            readTimeout: 3600s
+            writeTimeout: 3600s

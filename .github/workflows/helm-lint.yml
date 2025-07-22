@@ -1,0 +1,50 @@
+---
+name: Helm Lint and Test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  helm-lint:
+    name: Helm Lint and Validate
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: '3.14.0'
+
+      - name: Run helm lint
+        run: |
+          helm lint interlink/
+          
+      - name: Validate rendered templates with kubeval
+        run: |
+          # Install kubeval
+          curl -L https://github.com/instrumenta/kubeval/releases/latest/download/kubeval-linux-amd64.tar.gz | tar xz
+          sudo mv kubeval /usr/local/bin/
+          
+          # Render templates and validate
+          helm template virtual-node ./interlink --values ./interlink/values.yaml | kubeval --ignore-missing-schemas
+
+      - name: Install chart-testing
+        uses: helm/chart-testing-action@v2.6.1
+
+      - name: Run chart-testing (lint)
+        run: |
+          ct lint --chart-dirs . --charts interlink --validate-maintainers=false
+
+      - name: Test chart installation
+        run: |
+          # Create kind cluster for testing
+          kind create cluster --wait 300s
+          
+          # Test chart installation
+          helm install test-release ./interlink --dry-run --debug
