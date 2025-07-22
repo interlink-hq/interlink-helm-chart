@@ -30,14 +30,11 @@ data:
     JobScriptBuilderURL: {{.Values.virtualNode.JobScriptBuilderURL }}
     {{- end }}
     ExportPodData: {{ .Values.interlink.exportPodData }}
-    VerboseLogging: >
-      {{.Values.interlink.logging.verboseLogging | default true}}
-    ErrorsOnlyLogging: >
-      {{.Values.interlink.logging.errorsOnlyLogging | default false}}
+    VerboseLogging:  {{.Values.interlink.logging.verboseLogging | default true}}
+    ErrorsOnlyLogging:  {{.Values.interlink.logging.errorsOnlyLogging | default false}}
     ServiceAccount: "{{ .Values.nodeName }}"
     Namespace: "{{ .Release.Namespace }}"
-    VKTokenFile: >
-      {{.Values.OAUTH.enabled | ternary "/opt/interlink/token" "/dev/null"}}
+    VKTokenFile: {{.Values.OAUTH.enabled | ternary "/opt/interlink/token" "/dev/null"}}
     {{- if .Values.interlink.tls.enabled }}
     TLS:
       Enabled: {{ .Values.interlink.tls.enabled }}
@@ -71,16 +68,10 @@ data:
         Effect: "{{ .effect }}"
       {{- end }}
     Network:
-      EnableTunnel: >
-        {{.Values.virtualNode.network.enableTunnel | default false}}
-      TunnelImage: >
-        {{.Values.virtualNode.network.tunnelImage |
-        default "ghcr.io/erebe/wstunnel:latest" | quote}}
-      WildcardDNS: >
-        {{.Values.virtualNode.network.wildcardDNS | default "" | quote}}
-      WstunnelTemplatePath: >
-        {{.Values.virtualNode.network.wstunnelTemplatePath |
-        default "/etc/templates/wstunnel.yaml" | quote}}
+      EnableTunnel: {{.Values.virtualNode.network.enableTunnel | default false}}
+      TunnelImage: {{.Values.virtualNode.network.tunnelImage | default "ghcr.io/erebe/wstunnel:latest" | quote}}
+      WildcardDNS: {{.Values.virtualNode.network.wildcardDNS | default "" | quote}}
+      WstunnelTemplatePath: {{.Values.virtualNode.network.wstunnelTemplatePath | default "/etc/templates/wstunnel.yaml" | quote}}
       WstunnelCommand: {{ .Values.virtualNode.network.wstunnelCommand | quote }}
 {{- if .Values.interlink.enabled}}
 ---
@@ -106,10 +97,8 @@ data:
     SidecarURL: {{ .Values.plugin.address | quote }}
     SidecarPort: {{ .Values.plugin.port | quote }}
     {{- end }}
-    VerboseLogging: >
-      {{.Values.interlink.logging.verboseLogging | default true}}
-    ErrorsOnlyLogging: >
-      {{.Values.interlink.logging.errorsOnlyLogging | default false}}
+    VerboseLogging: {{.Values.interlink.logging.verboseLogging | default true}}
+    ErrorsOnlyLogging: {{.Values.interlink.logging.errorsOnlyLogging | default false}}
     {{- if .Values.interlink.tls.enabled }}
     TLS:
       Enabled: {{ .Values.interlink.tls.enabled }}
