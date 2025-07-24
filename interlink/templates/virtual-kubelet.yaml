@@ -26,11 +26,13 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      imagePullSecrets:
+{{ toYaml .Values.global.images.pullSecrets | indent 8 }}
       containers:
       {{- if .Values.plugin.enabled }}
       - name: plugin
-        image: "{{.Values.plugin.image}}"
-        imagePullPolicy: Always
+        image: "{{ .Values.plugin.image.registry }}/{{ .Values.plugin.image.repository}}:{{ .Values.plugin.image.tag }}"
+        imagePullPolicy: "{{ .Values.global.images.pullPolicy }}"
         {{- if .Values.plugin.privileged }}
         securityContext:
           privileged: true
@@ -61,8 +63,8 @@ spec:
       {{- end }}
       {{- if .Values.interlink.enabled }}
       - name: interlink
-        image: "{{.Values.interlink.image}}"
-        imagePullPolicy: Always
+        image: "{{ .Values.interlink.image.registry }}/{{ .Values.interlink.image.repository }}:{{ .Values.interlink.image.tag }}"
+        imagePullPolicy: "{{ .Values.global.images.pullPolicy }}"
         env:
           - name: INTERLINKCONFIGPATH
             value: "/etc/interlink/InterLinkConfig.yaml"
@@ -83,8 +85,8 @@ spec:
           {{- end }}
       {{- end }}
       - name: vk
-        image: {{.Values.virtualNode.image}}
-        imagePullPolicy: Always
+        image: "{{ .Values.virtualNode.image.registry }}/{{ .Values.virtualNode.image.repository }}:{{ .Values.virtualNode.image.tag }}"
+        imagePullPolicy: "{{ .Values.global.images.pullPolicy }}"
         env:
         - name: NODENAME
           value: {{.Values.nodeName}}
@@ -140,8 +142,8 @@ spec:
         {{- end }}
       {{- if .Values.OAUTH.enabled }}
       - name: refresh-token
-        image: "{{.Values.OAUTH.image}}"
-        imagePullPolicy: Always
+        image: "{{ .Values.OAUTH.image.registry }}/{{ .Values.OAUTH.image.repository }}:{{ .Values.OAUTH.image.tag }}"
+        imagePullPolicy: "{{ .Values.global.images.pullPolicy }}"
         env:
         - name: IAM_TOKEN_ENDPOINT
           value: {{.Values.OAUTH.TokenURL}}
@@ -177,8 +179,8 @@ spec:
       {{- end }}
       {{- if .Values.sshBastion.enabled }}
       - name: ssh-bastion
-        image: "{{.Values.sshBastion.image}}"
-        imagePullPolicy: Always
+        image: "{{ .Values.sshBastion.image.registry }}/{{ .Values.sshBastion.image.repository }}:{{ .Values.sshBastion.image.tag }}"
+        imagePullPolicy: "{{ .Values.global.images.pullPolicy }}"
         ports:
         - containerPort: 2222
         - containerPort: 22

@@ -4,8 +4,19 @@
 
 nodeName: virtual-node
 
+global:
+  images:
+    # -- imagePullPolicy to apply to all containers
+    pullPolicy: Always
+    # -- Secrets with credentials to pull images from a private registry
+    # Eg: pullSecrets: [ name: pull-secret1, name: pull-secret2 ]
+    pullSecrets: []
+
 interlink:
-  image: ghcr.io/interlink-hq/interlink/interlink:latest
+  image:
+    registry: "ghcr.io"
+    repository: "interlink-hq/interlink/interlink"
+    tag: "latest"
   enabled: false
   exportPodData: false
   dataRootVolume: ""
@@ -48,8 +59,17 @@ interlink:
   #     apptainer_options: {}
   #     volume_options: {}
 
+interlinkTestConnection:
+  image:
+    registry: "docker.io"
+    repository: "bitnami/kubectl"
+    tag: "latest"
+
 virtualNode:
-  image: ghcr.io/interlink-hq/interlink/virtual-kubelet-inttw:latest
+  image:
+    registry: "ghcr.io"
+    repository: "interlink-hq/interlink/virtual-kubelet-inttw"
+    tag: "latest"
   resources:
     CPUs: 8
     memGiB: 49
@@ -110,8 +130,11 @@ virtualNode:
 
 plugin:
   enabled: false
-  image: ""
-  command: []
+  image:
+    registry: ""
+    repository: ""
+    tag: ""
+  commands: []
   args: []
   # content of the "config" will be mounted as /etc/interlink/plugin.yaml
   config: ""
@@ -132,7 +155,10 @@ plugin:
 
 sshBastion:
   enabled: false
-  image: lscr.io/linuxserver/openssh-server:latest
+  image:
+    registry: "lscr.io"
+    repository: "linuxserver/openssh-server"
+    tag: "latest"
   clientKeys:
     authorizedKeys: ""
     keysURL: ""
@@ -148,7 +174,10 @@ sshBastion:
 # disable OAUTH when using sockets for communication in the in-cluster mode
 OAUTH:
   enabled: false
-  image: ghcr.io/interlink-hq/interlink/virtual-kubelet-inttw-refresh:latest
+  image:
+    registry: "ghcr.io"
+    repository: "interlink-hq/interlink/virtual-kubelet-inttw-refresh"
+    tag: "latest"
   TokenURL: DUMMY
   ClientID: DUMMY
   ClientSecret: DUMMY
