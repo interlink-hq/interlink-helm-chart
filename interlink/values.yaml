@@ -14,7 +14,7 @@ global:
 
 interlink:
   image:
-    registry: "ghcr.io"
+    registry: "ghcr.io/"
     repository: "interlink-hq/interlink/interlink"
     tag: "latest"
   enabled: false
@@ -61,13 +61,13 @@ interlink:
 
 interlinkTestConnection:
   image:
-    registry: "docker.io"
+    registry: "docker.io/"
     repository: "bitnami/kubectl"
     tag: "latest"
 
 virtualNode:
   image:
-    registry: "ghcr.io"
+    registry: "ghcr.io/"
     repository: "interlink-hq/interlink/virtual-kubelet-inttw"
     tag: "latest"
   resources:
@@ -116,7 +116,10 @@ virtualNode:
     # Enable tunnel feature (creates wstunnel template ConfigMap)
     enableTunnel: false
     # Container image for wstunnel
-    tunnelImage: "ghcr.io/erebe/wstunnel:latest"
+    tunnelImage:
+      registry: "ghcr.io/"
+      repository: "erebe/wstunnel"
+      tag: "latest"
     # DNS domain for ingress (e.g., "example.com")
     wildcardDNS: ""
     # Path where wstunnel template will be mounted in VK container
@@ -156,7 +159,7 @@ plugin:
 sshBastion:
   enabled: false
   image:
-    registry: "lscr.io"
+    registry: "lscr.io/"
     repository: "linuxserver/openssh-server"
     tag: "latest"
   clientKeys:
@@ -175,7 +178,7 @@ sshBastion:
 OAUTH:
   enabled: false
   image:
-    registry: "ghcr.io"
+    registry: "ghcr.io/"
     repository: "interlink-hq/interlink/virtual-kubelet-inttw-refresh"
     tag: "latest"
   TokenURL: DUMMY

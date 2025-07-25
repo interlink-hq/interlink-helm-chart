@@ -31,7 +31,7 @@ spec:
       containers:
       {{- if .Values.plugin.enabled }}
       - name: plugin
-        image: "{{ .Values.plugin.image.registry }}/{{ .Values.plugin.image.repository}}:{{ .Values.plugin.image.tag }}"
+        image: "{{ with .Values.plugin.image }}{{ .registry }}{{ .repository }}:{{ .tag }}{{ end }}"
         imagePullPolicy: "{{ .Values.global.images.pullPolicy }}"
         {{- if .Values.plugin.privileged }}
         securityContext:
@@ -63,7 +63,7 @@ spec:
       {{- end }}
       {{- if .Values.interlink.enabled }}
       - name: interlink
-        image: "{{ .Values.interlink.image.registry }}/{{ .Values.interlink.image.repository }}:{{ .Values.interlink.image.tag }}"
+        image: "{{ with .Values.interlink.image }}{{ .registry }}{{ .repository }}:{{ .tag }}{{ end }}"
         imagePullPolicy: "{{ .Values.global.images.pullPolicy }}"
         env:
           - name: INTERLINKCONFIGPATH
@@ -85,7 +85,7 @@ spec:
           {{- end }}
       {{- end }}
       - name: vk
-        image: "{{ .Values.virtualNode.image.registry }}/{{ .Values.virtualNode.image.repository }}:{{ .Values.virtualNode.image.tag }}"
+        image: "{{ with .Values.virtualNode.image }}{{ .registry }}{{ .repository }}:{{ .tag }}{{ end }}"
         imagePullPolicy: "{{ .Values.global.images.pullPolicy }}"
         env:
         - name: NODENAME
@@ -142,7 +142,7 @@ spec:
         {{- end }}
       {{- if .Values.OAUTH.enabled }}
       - name: refresh-token
-        image: "{{ .Values.OAUTH.image.registry }}/{{ .Values.OAUTH.image.repository }}:{{ .Values.OAUTH.image.tag }}"
+        image: "{{ with .Values.OAUTH.image }}{{ .registry }}{{ .repository }}:{{ .tag }}{{ end }}"
         imagePullPolicy: "{{ .Values.global.images.pullPolicy }}"
         env:
         - name: IAM_TOKEN_ENDPOINT
@@ -179,7 +179,7 @@ spec:
       {{- end }}
       {{- if .Values.sshBastion.enabled }}
       - name: ssh-bastion
-        image: "{{ .Values.sshBastion.image.registry }}/{{ .Values.sshBastion.image.repository }}:{{ .Values.sshBastion.image.tag }}"
+        image: "{{ with .Values.sshBastion.image }}{{ .registry }}{{ .repository }}:{{ .tag }}{{ end }}"
         imagePullPolicy: "{{ .Values.global.images.pullPolicy }}"
         ports:
         - containerPort: 2222
