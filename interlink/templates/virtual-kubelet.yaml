@@ -32,7 +32,7 @@ spec:
       {{- if .Values.plugin.enabled }}
       - name: plugin
         image: "{{ with .Values.plugin.image }}{{ .registry }}{{ .repository }}:{{ .tag }}{{ end }}"
-        imagePullPolicy: "{{ .Values.global.images.pullPolicy }}"
+        imagePullPolicy: "{{ if .Values.plugin.image.pullPolicy }}{{ .Values.plugin.image.pullPolicy }}{{ else }}{{ .Values.global.images.pullPolicy }}{{ end }}"
         {{- if .Values.plugin.privileged }}
         securityContext:
           privileged: true
