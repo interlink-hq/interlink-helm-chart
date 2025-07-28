@@ -139,7 +139,7 @@ plugin:
     tag: ""
     # if defined, overrides global.images.pullPolicy
     pullPolicy: null
-  commands: []
+  command: []
   args: []
   # content of the "config" will be mounted as /etc/interlink/plugin.yaml
   config: ""
