@@ -21,7 +21,7 @@ data:
     {{- end }}
     {{- if .Values.interlink.kubernetesApiCaCrt }}
     KubernetesApiCaCrt: |
-      {{.Values.interlink.kubernetesApiCaCrt | indent 6}}
+{{.Values.interlink.kubernetesApiCaCrt | indent 6}}
     {{- end }}
     {{- if .Values.interlink.disableProjectedVolumes }}
     DisableProjectedVolumes: {{.Values.interlink.disableProjectedVolumes }}
