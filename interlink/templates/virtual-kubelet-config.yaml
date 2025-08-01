@@ -20,8 +20,8 @@ data:
     KubernetesApiPort: {{.Values.interlink.kubernetesApiPort | quote }}
     {{- end }}
     {{- if .Values.interlink.kubernetesApiCaCrt }}
-    KubernetesApiCaCrt: |
-      {{.Values.interlink.kubernetesApiCaCrt | indent 6}}
+    KubernetesApiCaCrt: |{{ printf "\n" }}
+      {{- .Values.interlink.kubernetesApiCaCrt | indent 6}}
     {{- end }}
     {{- if .Values.interlink.disableProjectedVolumes }}
     DisableProjectedVolumes: {{.Values.interlink.disableProjectedVolumes }}
@@ -69,7 +69,7 @@ data:
       {{- end }}
     Network:
       EnableTunnel: {{.Values.virtualNode.network.enableTunnel | default false}}
-      TunnelImage: {{.Values.virtualNode.network.tunnelImage | default "ghcr.io/erebe/wstunnel:latest" | quote}}
+      TunnelImage: {{ with .Values.virtualNode.network.tunnelImage }}{{ .registry }}{{ .repository }}:{{ .tag }}{{ end }}
       WildcardDNS: {{.Values.virtualNode.network.wildcardDNS | default "" | quote}}
       WstunnelTemplatePath: {{.Values.virtualNode.network.wstunnelTemplatePath | default "/etc/templates/wstunnel.yaml" | quote}}
       WstunnelCommand: {{ .Values.virtualNode.network.wstunnelCommand | quote }}
@@ -145,6 +145,10 @@ metadata:
   name: "{{ .Values.nodeName }}-plugin-config"
   namespace: {{ .Release.Namespace }}
 data:
-  plugin.yaml: |
-{{ .Values.plugin.config | indent 4 }}
+  plugin.yaml: |{{ printf "\n" }}
+    {{- if kindIs "string" .Values.plugin.config }}
+      {{- .Values.plugin.config | indent 4 }}
+    {{- else }}
+      {{- .Values.plugin.config | toYaml | indent 4 }}
+    {{- end }}
 {{- end }}
