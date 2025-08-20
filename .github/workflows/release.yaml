@@ -42,7 +42,7 @@ jobs:
           cat ./interlink/Chart.yaml
 
       - name: Run chart-releaser
-        uses: bitdeps/helm-oci-charts-releaser@v0.1.0
+        uses: bitdeps/helm-oci-charts-releaser@v0.1.4
         with:
             # Warning: oci_registry must not contain uppercase.
             oci_registry: ghcr.io/${{ env.GITHUB_REPOSITORY_LOWERCASE }}
