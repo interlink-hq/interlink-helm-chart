@@ -73,6 +73,15 @@ data:
       WildcardDNS: {{.Values.virtualNode.network.wildcardDNS | default "" | quote}}
       WstunnelTemplatePath: {{.Values.virtualNode.network.wstunnelTemplatePath | default "/etc/templates/wstunnel.yaml" | quote}}
       WstunnelCommand: {{ .Values.virtualNode.network.wstunnelCommand | quote }}
+      {{- if .Values.virtualNode.network.fullMesh }}
+      FullMesh: {{ .Values.virtualNode.network.fullMesh }}
+      ServiceCIDR: {{ .Values.virtualNode.network.serviceCIDR | quote }}
+      PodCIDRCluster: {{ .Values.virtualNode.network.podCIDRCluster | quote }}
+      DNSService: {{ .Values.virtualNode.network.dnsService | quote }}
+      WireguardGoURL: {{ .Values.virtualNode.network.wireguardGoURL | quote }}
+      WgToolURL: {{ .Values.virtualNode.network.wgToolURL | quote }}
+      UnshareMode: {{ .Values.virtualNode.network.unshareMode | quote }}
+      {{- end }}
 {{- if .Values.interlink.enabled}}
 ---
 apiVersion: v1
