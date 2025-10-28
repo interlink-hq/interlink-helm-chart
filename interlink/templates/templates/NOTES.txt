@@ -1,0 +1,111 @@
+🎉 interLink virtual node "{{ .Values.nodeName }}" has been deployed!
+
+📋 DEPLOYMENT SUMMARY:
+{{- if .Values.interlink.enabled }}
+✅ interLink API server: ENABLED
+{{- else }}
+❌ interLink API server: DISABLED
+{{- end }}
+{{- if .Values.plugin.enabled }}
+✅ Plugin component: ENABLED
+{{- else }}
+❌ Plugin component: DISABLED  
+{{- end }}
+{{- if .Values.OAUTH.enabled }}
+✅ OAuth2 authentication: ENABLED
+{{- else }}
+❌ OAuth2 authentication: DISABLED
+{{- end }}
+{{- if .Values.sshBastion.enabled }}
+✅ SSH bastion: ENABLED (port {{ .Values.sshBastion.port }})
+{{- else }}
+❌ SSH bastion: DISABLED
+{{- end }}
+
+🔍 VERIFICATION STEPS:
+
+1. Check virtual node status:
+   kubectl get node {{ .Values.nodeName }}
+
+2. Verify all pods are running:
+   kubectl get pods -n {{ .Release.Namespace }} -l app={{ .Values.nodeName }}
+
+3. Check virtual node details:
+   kubectl describe node {{ .Values.nodeName }}
+
+4. View component logs:
+   # Virtual kubelet logs
+   kubectl logs -n {{ .Release.Namespace }} deployment/{{ .Values.nodeName }}-node -c vk
+   {{- if .Values.interlink.enabled }}
+   # interLink server logs  
+   kubectl logs -n {{ .Release.Namespace }} deployment/{{ .Values.nodeName }}-node -c interlink
+   {{- end }}
+   {{- if .Values.plugin.enabled }}
+   # Plugin logs
+   kubectl logs -n {{ .Release.Namespace }} deployment/{{ .Values.nodeName }}-node -c plugin
+   {{- end }}
+   {{- if .Values.OAUTH.enabled }}
+   # OAuth token refresh logs
+   kubectl logs -n {{ .Release.Namespace }} deployment/{{ .Values.nodeName }}-node -c refresh-token
+   {{- end }}
+
+🧪 TEST YOUR VIRTUAL NODE:
+
+Create a test pod to verify the virtual node is working:
+
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-{{ .Values.nodeName }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  nodeSelector:
+    kubernetes.io/hostname: {{ .Values.nodeName }}
+  tolerations:
+    - key: virtual-node.interlink/no-schedule
+      operator: Exists
+  containers:
+  - name: test
+    image: busybox:1.35
+    command: ["sh", "-c"]
+    args: ["echo 'Hello from virtual node {{ .Values.nodeName }}!' && sleep 300"]
+    resources:
+      requests:
+        memory: "100M"
+        cpu: "250m"
+      limits:
+        memory: "200M"
+        cpu: "1"
+  restartPolicy: Never
+EOF
+
+# Check test pod status
+kubectl get pod test-{{ .Values.nodeName }} -n {{ .Release.Namespace }} -o wide
+
+🚨 TROUBLESHOOTING:
+
+If the virtual node is not Ready:
+{{- if not .Values.interlink.enabled }}
+⚠️  WARNING: interLink server is DISABLED. For edge deployments, ensure remote components are deployed first.
+{{- end }}
+
+Common issues:
+• Node not Ready: Check logs and ensure remote components are accessible
+• Pod scheduling fails: Verify node taints/tolerations and available resources  
+• Connection errors: Check network connectivity and authentication
+{{- if .Values.OAUTH.enabled }}
+• OAuth issues: Verify token refresh is working and credentials are correct
+{{- end }}
+{{- if .Values.sshBastion.enabled }}
+• SSH issues: Check SSH keys and remote connectivity
+{{- end }}
+
+📚 RESOURCES:
+
+• Documentation: https://interlink-hq.github.io/interLink/
+• Cookbook: https://interlink-hq.github.io/interLink/docs/cookbook
+• Chart repository: https://interlink-hq.github.io/interlink-helm-chart/
+
+Happy computing with interLink! 🚀
+

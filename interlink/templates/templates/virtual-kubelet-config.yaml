@@ -1,0 +1,159 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "{{.Values.nodeName}}-virtual-kubelet-config"
+  namespace: {{.Release.Namespace}}
+data:
+  InterLinkConfig.yaml: |
+    {{- if .Values.interlink.socket }}
+    InterlinkURL: {{ .Values.interlink.socket | quote }}
+    InterlinkPort: {{ printf "%s-1" .Values.interlink.socket | quote }}
+    {{- else }}
+    InterlinkURL: {{ .Values.interlink.address | quote }}
+    InterlinkPort: {{ .Values.interlink.port | quote }}
+    {{- end }}
+    {{- if .Values.interlink.kubernetesApiAddr }}
+    KubernetesApiAddr: {{.Values.interlink.kubernetesApiAddr | quote }}
+    {{- end }}
+    {{- if .Values.interlink.kubernetesApiPort }}
+    KubernetesApiPort: {{.Values.interlink.kubernetesApiPort | quote }}
+    {{- end }}
+    {{- if .Values.interlink.kubernetesApiCaCrt }}
+    KubernetesApiCaCrt: |
+      {{.Values.interlink.kubernetesApiCaCrt | indent 6}}
+    {{- end }}
+    {{- if .Values.interlink.disableProjectedVolumes }}
+    DisableProjectedVolumes: {{.Values.interlink.disableProjectedVolumes }}
+    {{- end }}
+    {{- if .Values.virtualNode.JobScriptBuilderURL }}
+    JobScriptBuilderURL: {{.Values.virtualNode.JobScriptBuilderURL }}
+    {{- end }}
+    ExportPodData: {{ .Values.interlink.exportPodData }}
+    VerboseLogging:  {{.Values.interlink.logging.verboseLogging | default true}}
+    ErrorsOnlyLogging:  {{.Values.interlink.logging.errorsOnlyLogging | default false}}
+    ServiceAccount: "{{ .Values.nodeName }}"
+    Namespace: "{{ .Release.Namespace }}"
+    VKTokenFile: {{.Values.OAUTH.enabled | ternary "/opt/interlink/token" "/dev/null"}}
+    {{- if .Values.interlink.tls.enabled }}
+    TLS:
+      Enabled: {{ .Values.interlink.tls.enabled }}
+      CertFile: {{ .Values.interlink.tls.certFile | quote }}
+      KeyFile: {{ .Values.interlink.tls.keyFile | quote }}
+      CACertFile: {{ .Values.interlink.tls.caCertFile | quote }}
+    {{- end }}
+    Resources:
+      CPU: "{{ .Values.virtualNode.resources.CPUs }}"
+      Memory: "{{ .Values.virtualNode.resources.memGiB }}Gi"
+      Pods: "{{ .Values.virtualNode.resources.pods }}"
+      Accelerators:
+      {{- range .Values.virtualNode.resources.accelerators }}
+      - ResourceType: "{{ .resourceType }}"
+        Model: "{{ .model }}"
+        Available: {{ .available }}
+      {{- end }}
+    HTTP:
+      Insecure: {{ .Values.virtualNode.HTTP.insecure }}
+      CaCert: {{ .Values.virtualNode.HTTP.CACert }}
+    KubeletHTTP:
+      insecure: {{ .Values.virtualNode.kubeletHTTP.insecure }}
+    NodeLabels:
+      {{- range .Values.virtualNode.nodeLabels }}
+      - "{{ . }}"
+      {{- end }}
+    NodeTaints:
+      {{- range .Values.virtualNode.nodeTaints }}
+      - Key: "{{ .key }}"
+        Value: "{{ .value }}"
+        Effect: "{{ .effect }}"
+      {{- end }}
+    Network:
+      EnableTunnel: {{.Values.virtualNode.network.enableTunnel | default false}}
+      TunnelImage: {{.Values.virtualNode.network.tunnelImage | default "ghcr.io/erebe/wstunnel:latest" | quote}}
+      WildcardDNS: {{.Values.virtualNode.network.wildcardDNS | default "" | quote}}
+      WstunnelTemplatePath: {{.Values.virtualNode.network.wstunnelTemplatePath | default "/etc/templates/wstunnel.yaml" | quote}}
+      WstunnelCommand: {{ .Values.virtualNode.network.wstunnelCommand | quote }}
+      {{- if .Values.virtualNode.network.fullMesh }}
+      FullMesh: {{ .Values.virtualNode.network.fullMesh }}
+      ServiceCIDR: {{ .Values.virtualNode.network.serviceCIDR | quote }}
+      PodCIDRCluster: {{ .Values.virtualNode.network.podCIDRCluster | quote }}
+      DNSService: {{ .Values.virtualNode.network.dnsService | quote }}
+      WireguardGoURL: {{ .Values.virtualNode.network.wireguardGoURL | quote }}
+      WgToolURL: {{ .Values.virtualNode.network.wgToolURL | quote }}
+      UnshareMode: {{ .Values.virtualNode.network.unshareMode | quote }}
+      {{- end }}
+{{- if .Values.interlink.enabled}}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "{{.Values.nodeName}}-interlink-config"
+  namespace: {{.Release.Namespace}}
+data:
+  InterLinkConfig.yaml: |
+    {{- if .Values.interlink.socket }}
+    InterlinkAddress: {{ .Values.interlink.socket | quote }}
+    {{- else }}
+    InterlinkAddress: {{ .Values.interlink.address | quote }}
+    InterlinkPort: {{ .Values.interlink.port | quote }}
+    {{- end }}
+    {{- if .Values.plugin.socket }}
+    SidecarURL: {{ .Values.plugin.socket | quote }}
+    {{- else if .Values.interlink.pluginEndpoint.url }}
+    SidecarURL: {{ .Values.interlink.pluginEndpoint.url | quote }}
+    SidecarPort: {{ .Values.interlink.pluginEndpoint.port | quote }}
+    {{- else }}
+    SidecarURL: {{ .Values.plugin.address | quote }}
+    SidecarPort: {{ .Values.plugin.port | quote }}
+    {{- end }}
+    VerboseLogging: {{.Values.interlink.logging.verboseLogging | default true}}
+    ErrorsOnlyLogging: {{.Values.interlink.logging.errorsOnlyLogging | default false}}
+    {{- if .Values.interlink.tls.enabled }}
+    TLS:
+      Enabled: {{ .Values.interlink.tls.enabled }}
+      {{- if .Values.interlink.tls.certFile }}
+      CertFile: {{ .Values.interlink.tls.certFile | quote }}
+      {{- end }}
+      {{- if .Values.interlink.tls.keyFile }}
+      KeyFile: {{ .Values.interlink.tls.keyFile | quote }}
+      {{- end }}
+      {{- if .Values.interlink.tls.caCertFile }}
+      CACertFile: {{ .Values.interlink.tls.caCertFile | quote }}
+      {{- end }}
+    {{- end }}
+    ExportPodData: {{ .Values.interlink.exportPodData }}
+    DataRootFolder: /data/interlink
+    {{- if .Values.interlink.jobScript }}
+    {{.Values.interlink.jobScript }}
+    {{- end }}
+{{- end }}
+---
+{{- if .Values.virtualNode.network.enableTunnel }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "{{ .Values.nodeName }}-wstunnel-template"
+  namespace: {{ .Release.Namespace }}
+data:
+  wstunnel.yaml: |
+{{- if .Values.virtualNode.network.customTemplate }}
+{{ .Values.virtualNode.network.customTemplate | indent 4 }}
+{{- else if eq .Values.virtualNode.network.templateType "nginx" }}
+{{ .Files.Get "wstunnel-template_nginx.yaml" | indent 4 }}
+{{- else if eq .Values.virtualNode.network.templateType "traefik" }}
+{{ .Files.Get "wstunnel-template_traefik.yaml" | indent 4 }}
+{{- else }}
+{{ .Files.Get "wstunnel-template_nginx.yaml" | indent 4 }}
+{{- end }}
+{{- end }}
+---
+{{- if .Values.plugin.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "{{ .Values.nodeName }}-plugin-config"
+  namespace: {{ .Release.Namespace }}
+data:
+  plugin.yaml: |
+{{ .Values.plugin.config | indent 4 }}
+{{- end }}
