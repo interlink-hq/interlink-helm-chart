@@ -113,6 +113,12 @@ spec:
           value: {{.Values.virtualNode.HTTPProxies.HTTPs}}
         {{- end }}
         volumeMounts:
+        {{- if .Values.virtualNode.network.meshScriptTemplatePath }}
+        - name: mesh-script-template
+          mountPath: /etc/interlink/custom-mesh.sh  
+          subPath: custom-mesh.sh                    
+          readOnly: true
+        {{- end }}
         - name: config
           mountPath: /etc/interlink/InterLinkConfig.yaml
           subPath: InterLinkConfig.yaml
@@ -206,6 +212,11 @@ spec:
         {{- end }}
       {{- end }}
       volumes:
+      {{- if .Values.virtualNode.network.meshScriptTemplatePath }}
+      - name: mesh-script-template
+        configMap:
+          name: custom-mesh-script
+      {{- end }}
       - name: config
         configMap:
           name: {{.Values.nodeName}}-virtual-kubelet-config
@@ -249,6 +260,7 @@ spec:
         configMap:
           name: {{.Values.nodeName}}-wstunnel-template
       {{- end }}
+      
 
 {{- if .Values.sshBastion.enabled }}
 ---

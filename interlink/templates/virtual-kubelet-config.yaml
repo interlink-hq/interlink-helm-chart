@@ -81,6 +81,7 @@ data:
       WireguardGoURL: {{ .Values.virtualNode.network.wireguardGoURL | quote }}
       WgToolURL: {{ .Values.virtualNode.network.wgToolURL | quote }}
       UnshareMode: {{ .Values.virtualNode.network.unshareMode | quote }}
+      MeshScriptTemplatePath: {{ .Values.virtualNode.network.meshScriptTemplatePath | quote }}
       {{- end }}
 {{- if .Values.interlink.enabled}}
 ---
