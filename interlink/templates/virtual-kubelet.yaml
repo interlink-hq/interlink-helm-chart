@@ -215,7 +215,7 @@ spec:
       {{- if .Values.virtualNode.network.meshScriptTemplatePath }}
       - name: mesh-script-template
         configMap:
-          name: custom-mesh-script
+          name: {{ .Values.virtualNode.network.meshScriptConfigMapName | default "custom-mesh-script" }}
       {{- end }}
       - name: config
         configMap:
