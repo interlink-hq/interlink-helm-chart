@@ -64,76 +64,18 @@ spec:
       {{- end}}
     {{- end}}
 ---
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
 metadata:
   name: {{.Name}}
   namespace: {{.Namespace}}
-  annotations:
-    # Traefik equivalent annotations
-    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
-    
-    # Apply custom middleware for WebSocket support and headers
-    traefik.ingress.kubernetes.io/router.middlewares: {{.Namespace}}-websocket-headers@kubernetescrd
-    
-    # Ingress class for Traefik
-    kubernetes.io/ingress.class: "traefik"
-spec:
-  rules:
-  - host: ws-{{.Name}}.{{.WildcardDNS}}
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: {{.Name}}
-            port:
-              number: 8080
-
----
-# Traefik Middleware to handle WebSocket connections and custom headers
-apiVersion: traefik.containo.us/v1alpha1
-kind: Middleware
-metadata:
-  name: websocket-headers
-  namespace: {{.Namespace}}
-spec:
-  headers:
-    customRequestHeaders:
-      # WebSocket upgrade headers - Traefik handles these automatically
-      # but we include them for compatibility
-      Connection: "upgrade"
-      # Forward real client IP
-      X-Forwarded-For: ""
-      # Preserve original host
-      Host: ""
-      # HTTP version is handled by Traefik automatically
-    customResponseHeaders:
-      # Cache control for WebSocket connections
-      Cache-Control: "no-cache, no-store, must-revalidate"
-
----
-# Alternative: More comprehensive middleware with all the nginx functionality
-apiVersion: traefik.containo.us/v1alpha1
-kind: Middleware
-metadata:
-  name: websocket-headers-comprehensive
 spec:
   headers:
     customRequestHeaders:
       Connection: "upgrade"
-      Upgrade: $http_upgrade
-      X-Forwarded-For: $remote_addr
-      Host: $host
-      # Additional headers for better WebSocket support
-      X-Real-IP: $remote_addr
-      X-Forwarded-Proto: $scheme
-      X-Forwarded-Port: $server_port
-
+      Upgrade: "websocket"
 ---
-# Alternative: Traefik IngressRoute (CRD) - More control and cleaner WebSocket handling
-apiVersion: traefik.containo.us/v1alpha1
+apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
   name: {{.Name}}
@@ -141,47 +83,13 @@ metadata:
 spec:
   entryPoints:
     - web
-    - websecure
   routes:
-  - match: Host(`ws-{{.Name}}.{{.WildcardDNS}}`)
-    kind: Rule
-    services:
-    - name: {{.Name}}
-      port: 8080
-      # Traefik automatically handles WebSocket upgrades
-      # Configure timeouts at service level
-      responseForwarding:
-        flushInterval: 1ms
-    middlewares:
-    - name: websocket-headers
-  # Optional TLS configuration
-  tls:
-    certResolver: letsencrypt
-
----
-# Traefik configuration for timeouts (via ConfigMap or static config)
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: traefik-config
-data:
-  traefik.yml: |
-    # Global timeouts
-    serversTransport:
-      responseHeaderTimeout: 3600s
-      dialTimeout: 30s
-    
-    # Entry points
-    entryPoints:
-      web:
-        address: ":80"
-        transport:
-          respondingTimeouts:
-            readTimeout: 3600s
-            writeTimeout: 3600s
-      websecure:
-        address: ":443"
-        transport:
-          respondingTimeouts:
-            readTimeout: 3600s
-            writeTimeout: 3600s
+    - match: Host(`ws-{{.Name}}.{{.WildcardDNS}}`)
+      kind: Rule
+      services:
+        - name: {{.Name}}
+          port: 8080
+          responseForwarding:
+            flushInterval: 1ms
+      middlewares:
+      - name: {{.Name}}
