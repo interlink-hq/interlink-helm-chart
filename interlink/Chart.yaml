@@ -3,7 +3,7 @@ name: interlink
 description: Install interLink components and initiate your virtual node.
 type: application
 version: 0.0.0
-appVersion: "0.3.5"
+appVersion: "0.5.3"
 
 # Minimum Kubernetes version required
 kubeVersion: ">=1.20.0-0"
