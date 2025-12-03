@@ -1,0 +1,33 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{.Values.nodeName}}-node-cleanup
+  namespace: {{.Release.Namespace}}
+  annotations:
+    "helm.sh/hook": pre-delete
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded,hook-failed
+  labels:
+    app: {{.Values.nodeName}}
+    app.kubernetes.io/managed-by: {{.Release.Service}}
+spec:
+  ttlSecondsAfterFinished: 120
+  template:
+    metadata:
+      name: {{.Values.nodeName}}-node-cleanup
+      labels:
+        app: {{.Values.nodeName}}
+    spec:
+      serviceAccountName: {{.Values.nodeName}}
+      restartPolicy: OnFailure
+      containers:
+      - name: node-cleanup
+        image: bitnami/kubectl:latest
+        command:
+        - /bin/bash
+        - -c
+        - |
+          echo "Removing virtual node: {{.Values.nodeName}}"
+          kubectl delete node {{.Values.nodeName}} --ignore-not-found=true
+          echo "Node cleanup completed"
