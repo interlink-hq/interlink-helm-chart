@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - args:
-        - wstunnel server --log-lvl DEBUG --dns-resolver-prefer-ipv4 --restrict-http-upgrade-path-prefix {{.RandomPassword}}  ws://0.0.0.0:8080
+        - ./wstunnel server --log-lvl DEBUG --dns-resolver-prefer-ipv4 --restrict-http-upgrade-path-prefix {{.RandomPassword}}  ws://0.0.0.0:28080
         command:
         - bash
         - -c
@@ -24,7 +24,7 @@ spec:
         imagePullPolicy: IfNotPresent
         name: wireguard
         ports:
-        - containerPort: 8080
+        - containerPort: 28080
           name: webhook
           protocol: TCP
         - containerPort: 51820
@@ -52,12 +52,12 @@ spec:
   selector:
     app.kubernetes.io/component: {{.Name}}
   ports:
-    - port: 8080
-      targetPort: 8080
+    - port: 28080
+      targetPort: 28080
       name: ws
     {{- range .ExposedPorts}}
     - port: {{.Port}}
-      targetPort: {{.TargetPort}}
+      targetPort: {{.Port}}
       name: {{.Name}}
       {{- if .Protocol}}
       protocol: {{.Protocol}}
@@ -88,7 +88,7 @@ spec:
       kind: Rule
       services:
         - name: {{.Name}}
-          port: 8080
+          port: 28080
           responseForwarding:
             flushInterval: 1ms
       middlewares:
