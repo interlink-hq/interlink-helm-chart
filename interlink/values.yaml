@@ -91,6 +91,8 @@ virtualNode:
   # # Indicate endpoint for JobScript translator
   # JobScriptBuilderURL: "https://test.translator.com/podtranslate"
 
+  disableCSR: false
+
   # Network tunnel configuration for wstunnel
   network:
     # Enable tunnel feature (creates wstunnel template ConfigMap)
