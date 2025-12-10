@@ -67,6 +67,7 @@ data:
         Value: "{{ .value }}"
         Effect: "{{ .effect }}"
       {{- end }}
+    DisableCSR: {{.Values.virtualNode.disableCSR | default false}}
     Network:
       EnableTunnel: {{.Values.virtualNode.network.enableTunnel | default false}}
       TunnelImage: {{.Values.virtualNode.network.tunnelImage | default "ghcr.io/erebe/wstunnel:latest" | quote}}
