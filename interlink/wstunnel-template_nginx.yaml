@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - args:
-        - ./wstunnel server --log-lvl DEBUG --dns-resolver-prefer-ipv4 --restrict-http-upgrade-path-prefix {{.RandomPassword}}  ws://0.0.0.0:28080
+        - ./wstunnel server --log-lvl {{.WstunnelDebugLevel}} --dns-resolver-prefer-ipv4 --restrict-http-upgrade-path-prefix {{.RandomPassword}}  ws://0.0.0.0:28080
         command:
         - bash
         - -c

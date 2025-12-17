@@ -258,7 +258,11 @@ spec:
       {{- if .Values.virtualNode.network.enableTunnel }}
       - name: wstunnel-template
         configMap:
+          {{- if .Values.virtualNode.network.useExternalConfigMap }}
+          name: {{ .Values.virtualNode.network.externalTemplate }}
+          {{- else }}
           name: {{.Values.nodeName}}-wstunnel-template
+          {{- end }}
       {{- end }}
       
 

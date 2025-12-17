@@ -73,6 +73,7 @@ data:
       TunnelImage: {{.Values.virtualNode.network.tunnelImage | default "ghcr.io/erebe/wstunnel:latest" | quote}}
       WildcardDNS: {{.Values.virtualNode.network.wildcardDNS | default "" | quote}}
       WstunnelTemplatePath: {{.Values.virtualNode.network.wstunnelTemplatePath | default "/etc/templates/wstunnel.yaml" | quote}}
+      WstunnelDebugLevel: {{.Values.virtualNode.network.wstunnelDebugLevel | default "DEBUG" | quote}}
       WstunnelCommand: {{ .Values.virtualNode.network.wstunnelCommand | quote }}
       {{- if .Values.virtualNode.network.fullMesh }}
       FullMesh: {{ .Values.virtualNode.network.fullMesh }}
@@ -130,7 +131,7 @@ data:
     {{- end }}
 {{- end }}
 ---
-{{- if .Values.virtualNode.network.enableTunnel }}
+{{- if and .Values.virtualNode.network.enableTunnel (not .Values.virtualNode.network.useExternalConfigMap) }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -138,7 +139,9 @@ metadata:
   namespace: {{ .Release.Namespace }}
 data:
   wstunnel.yaml: |
-{{- if .Values.virtualNode.network.customTemplate }}
+{{- if .Values.virtualNode.network.externalTemplate }}
+{{ .Files.Get .Values.virtualNode.network.externalTemplate | indent 4 }}
+{{- else if .Values.virtualNode.network.customTemplate }}
 {{ .Values.virtualNode.network.customTemplate | indent 4 }}
 {{- else if eq .Values.virtualNode.network.templateType "nginx" }}
 {{ .Files.Get "wstunnel-template_nginx.yaml" | indent 4 }}
