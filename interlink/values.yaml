@@ -107,6 +107,14 @@ virtualNode:
     templateType: ""
     # Custom wstunnel template content (optional, overrides templateType if set)
     customTemplate: ""
+    # External template reference (overrides customTemplate and templateType if set)
+    # Can be a local file path (e.g., "wstunnel-template_custom.yaml") or ConfigMap name
+    externalTemplate: ""
+    # Use existing ConfigMap for template instead of creating one
+    # If set to true, externalTemplate is treated as ConfigMap name
+    useExternalConfigMap: false
+    # Wstunnel debug level (e.g., "DEBUG", "INFO", "WARN", "ERROR")
+    wstunnelDebugLevel: "DEBUG"
     wstunnelCommand: |
       curl -L https://github.com/erebe/wstunnel/releases/download/v10.4.4/wstunnel_10.4.4_linux_amd64.tar.gz -o wstunnel.tar.gz && tar -xzvf wstunnel.tar.gz && chmod +x wstunnel && ./wstunnel client --http-upgrade-path-prefix %s %s ws://%s:80 &
 
