@@ -8,6 +8,7 @@ interlink:
   image: ghcr.io/interlink-hq/interlink/interlink:latest
   enabled: false
   exportPodData: false
+  skipDownwardAPIResolution: false
   dataRootVolume: ""
   # unix socket in /var/run
   socket: null
