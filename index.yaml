@@ -5,7 +5,7 @@ entries:
     appVersion: 0.6.0
     created: "2026-03-12T09:30:57.931198119+01:00"
     description: Install interLink components and initiate your virtual node.
-    digest: 482fadcb09789d3c65bf2a6853e5659f47aa3cc6dff928fc7e08cdcc09b07eb9
+    digest: d60e9e69e460d4698566a9c7d6644b97d626be9336d7e4dd1858e729a071df63
     home: https://intertwin-eu.github.io/interLink/
     keywords:
     - virtual-kubelet
