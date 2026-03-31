@@ -1,0 +1,124 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "description": "Configuration schema for interLink Helm chart",
+  "properties": {
+    "virtualNode": {
+      "type": "object",
+      "description": "Virtual kubelet configuration",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable virtual node registration"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 63,
+          "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$",
+          "description": "Unique Kubernetes node name (DNS compliant)"
+        },
+        "resources": {
+          "type": "object",
+          "description": "Resource requests/limits for virtual kubelet",
+          "properties": {
+            "limits": {
+              "type": "object",
+              "additionalProperties": { "type": "string" }
+            },
+            "requests": {
+              "type": "object",
+              "additionalProperties": { "type": "string" }
+            }
+          }
+        },
+        "httpServer": {
+          "type": "object",
+          "properties": {
+            "port": {
+              "type": "integer",
+              "default": 8080,
+              "minimum": 1,
+              "maximum": 65535
+            }
+          }
+        }
+      },
+      "required": ["name"]
+    },
+    "interlink": {
+      "type": "object",
+      "description": "interLink API server configuration",
+      "properties": {
+        "socket": {
+          "type": "object",
+          "description": "Socket communication mode configuration",
+          "properties": {
+            "port": {
+              "type": "integer",
+              "default": 8080
+            }
+          }
+        },
+        "oauth": {
+          "type": "object",
+          "description": "OAuth2 communication mode configuration",
+          "properties": {
+            "clientId": {
+              "type": "string",
+              "description": "OAuth2 client ID"
+            },
+            "clientSecret": {
+              "type": "string",
+              "description": "OAuth2 client secret"
+            },
+            "authURL": {
+              "type": "string",
+              "format": "uri",
+              "default": "https://keycloak.example.com/auth"
+            }
+          },
+          "required": ["clientId", "clientSecret"]
+        }
+      },
+      "oneOf": [
+        { "required": ["socket"] },
+        { "required": ["oauth"] }
+      ]
+    },
+    "plugin": {
+      "type": "object",
+      "description": "Plugin-specific configuration",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["slurm", "docker", "ssh"],
+          "description": "Workload execution backend: 'slurm' for HPC clusters, 'docker' for container hosts, 'ssh' for generic execution",
+          "examples": ["slurm", "docker"]
+        },
+        "endpoint": {
+          "type": "string",
+          "format": "uri",
+          "description": "Plugin API endpoint"
+        }
+      },
+      "required": ["type"]
+    },
+    "sshBastion": {
+      "type": "object",
+      "description": "SSH bastion configuration",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "image": {
+          "type": "string",
+          "default": "ghcr.io/interlink-hq/ssh-bastion:latest"
+        }
+      }
+    }
+  },
+  "required": ["virtualNode", "interlink"]
+}
