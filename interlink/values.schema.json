@@ -44,15 +44,14 @@
             }
           }
         }
-      },
-      "required": ["name"]
+      }
     },
     "interlink": {
       "type": "object",
       "description": "interLink API server configuration",
       "properties": {
         "socket": {
-          "type": "object",
+          "type": ["object", "null"],
           "description": "Socket communication mode configuration",
           "properties": {
             "port": {
@@ -102,8 +101,7 @@
           "format": "uri",
           "description": "Plugin API endpoint"
         }
-      },
-      "required": ["type"]
+      }
     },
     "sshBastion": {
       "type": "object",
