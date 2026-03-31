@@ -51,14 +51,8 @@
       "description": "interLink API server configuration",
       "properties": {
         "socket": {
-          "type": ["object", "null"],
-          "description": "Socket communication mode configuration",
-          "properties": {
-            "port": {
-              "type": "integer",
-              "default": 8080
-            }
-          }
+          "type": "string",
+          "description": "Socket path for communication (non-empty string enables socket mode)"
         },
         "oauth": {
           "type": "object",

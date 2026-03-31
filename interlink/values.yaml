@@ -11,7 +11,7 @@ interlink:
   skipDownwardAPIResolution: false
   dataRootVolume: ""
   # unix socket in /var/run
-  socket: null
+  socket: ""
   # if socket is specified, the address/port are ignored
   address: http://localhost
   port: 4000
