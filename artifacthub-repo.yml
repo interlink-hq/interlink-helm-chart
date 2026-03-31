@@ -1,0 +1,4 @@
+repositoryID: e0b7fee9-5c46-4506-95f5-a6ddaf00a9f5
+name: interlink-hq
+url: oci://ghcr.io/interlink-hq/interlink-helm-chart
+kind: 3
