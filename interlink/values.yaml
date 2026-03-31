@@ -11,7 +11,8 @@ interlink:
   skipDownwardAPIResolution: false
   dataRootVolume: ""
   # unix socket in /var/run
-  socket: null
+  socket:
+    port: 8080
   # if socket is specified, the address/port are ignored
   address: http://localhost
   port: 4000
@@ -50,6 +51,7 @@ interlink:
   #     volume_options: {}
 
 virtualNode:
+  name: "virtual-node"
   image: ghcr.io/interlink-hq/interlink/virtual-kubelet-inttw:latest
   resources:
     CPUs: 8
@@ -112,6 +114,7 @@ virtualNode:
       curl -L https://github.com/erebe/wstunnel/releases/download/v10.4.4/wstunnel_10.4.4_linux_amd64.tar.gz -o wstunnel.tar.gz && tar -xzvf wstunnel.tar.gz && chmod +x wstunnel && ./wstunnel client --http-upgrade-path-prefix %s %s ws://%s:80 &
 
 plugin:
+  type: "docker"
   enabled: false
   image: ""
   command: []
