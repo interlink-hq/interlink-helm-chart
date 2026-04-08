@@ -61,3 +61,39 @@ Create the name of the service account to use
 {{- end }}
 {{- end }}
 
+{{/*
+Render container resource requests and limits from the CPU/memory sub-key format:
+  resources:
+    CPU:
+      request: "100m"
+      limit: "500m"
+    memory:
+      request: "128Mi"
+      limit: "512Mi"
+*/}}
+{{- define "interlink.containerResources" -}}
+{{- $cpu := .CPU -}}
+{{- $mem := .memory -}}
+{{- if or $cpu $mem -}}
+resources:
+  {{- if or (and $cpu $cpu.request) (and $mem $mem.request) }}
+  requests:
+    {{- if and $cpu $cpu.request }}
+    cpu: {{ $cpu.request | quote }}
+    {{- end }}
+    {{- if and $mem $mem.request }}
+    memory: {{ $mem.request | quote }}
+    {{- end }}
+  {{- end }}
+  {{- if or (and $cpu $cpu.limit) (and $mem $mem.limit) }}
+  limits:
+    {{- if and $cpu $cpu.limit }}
+    cpu: {{ $cpu.limit | quote }}
+    {{- end }}
+    {{- if and $mem $mem.limit }}
+    memory: {{ $mem.limit | quote }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+{{- end }}
+

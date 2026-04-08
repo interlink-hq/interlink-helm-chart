@@ -37,6 +37,14 @@ interlink:
   pluginEndpoint:
     url: ""
     port: ""
+  # Resource requests and limits for the interlink container
+  resources:
+    CPU:
+      request: "100m"
+      limit: "500m"
+    memory:
+      request: "128Mi"
+      limit: "512Mi"
   # Extra volume mounts for the interlink container
   extraVolumeMounts: []
     # - name: data-root
@@ -83,6 +91,14 @@ virtualNode:
   #  - key: "accelerator"
   #    value: "a100"
   #    effect: "NoSchedule"
+  # Resource requests and limits for the virtual kubelet container
+  containerResources:
+    CPU:
+      request: "100m"
+      limit: "500m"
+    memory:
+      request: "128Mi"
+      limit: "512Mi"
   # Extra volume mounts for the virtual kubelet container
   extraVolumeMounts: []
     # - name: data-root
@@ -127,6 +143,14 @@ plugin:
   port: 3000
   # Run plugin container with privileged permissions
   privileged: false
+  # Resource requests and limits for the plugin container
+  resources:
+    CPU:
+      request: "500m"
+      limit: "2"
+    memory:
+      request: "500Mi"
+      limit: "2Gi"
   # Extra volume mounts for the plugin container
   extraVolumeMounts: []
     # - name: data-root
@@ -143,6 +167,14 @@ sshBastion:
     priv: ""
     pub: ""
   port: 31022
+  # Resource requests and limits for the SSH bastion container
+  resources:
+    CPU:
+      request: "50m"
+      limit: "100m"
+    memory:
+      request: "64Mi"
+      limit: "128Mi"
   # Extra volume mounts for the SSH bastion container
   extraVolumeMounts: []
     # - name: data-root
@@ -158,6 +190,14 @@ OAUTH:
   RefreshToken: DUMMY
   GrantType: authorization_code
   Audience: DUMMY
+  # Resource requests and limits for the OAuth refresh token container
+  resources:
+    CPU:
+      request: "100m"
+      limit: "200m"
+    memory:
+      request: "300Mi"
+      limit: "500Mi"
   # Extra volume mounts for the OAuth refresh token container
   extraVolumeMounts: []
     # - name: data-root
