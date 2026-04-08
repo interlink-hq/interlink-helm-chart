@@ -35,7 +35,7 @@ appearing as regular nodes to the Kubernetes scheduler.
 ```bash
 # Add the repository
 # Will be available once published:
-# helm repo add interlink https://intertwin-eu.github.io/interlink-helm-chart/
+# helm repo add interlink https://interlink-hq.github.io/interlink-helm-chart/
 
 # Update repositories
 helm repo update
@@ -49,14 +49,14 @@ helm install --create-namespace -n interlink virtual-node \
 
 ```bash
 helm install --create-namespace -n interlink virtual-node \
-  oci://ghcr.io/intertwin-eu/interlink-helm-chart/interlink \
+  oci://ghcr.io/interlink-hq/interlink-helm-chart/interlink \
   --values my-values.yaml
 ```
 
 ### Local Development
 
 ```bash
-git clone https://github.com/interTwin-eu/interlink-helm-chart.git
+git clone https://github.com/interlink-hq/interlink-helm-chart/
 cd interlink-helm-chart
 helm install --create-namespace -n interlink virtual-node \
   ./interlink --values my-values.yaml
