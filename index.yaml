@@ -3,9 +3,9 @@ entries:
   interlink:
   - apiVersion: v2
     appVersion: 0.6.1
-    created: "2026-04-09T09:30:03.910426279+02:00"
+    created: "2026-04-09T07:32:54.748684122Z"
     description: Install interLink components and initiate your virtual node.
-    digest: 4ea1a67998da3b93a2fb17e291c9f289338c18f01d808165bd741ef7e446a0f2
+    digest: c7484918f69480cfffa9e2f37ff9574e9f1996f4aeec82ea165d9dc117d0b5f1
     home: https://intertwin-eu.github.io/interLink/
     keywords:
     - virtual-kubelet
@@ -24,7 +24,7 @@ entries:
     - https://github.com/interTwin-eu/interlink-helm-chart
     type: application
     urls:
-    - https://interlink-hq.github.io/interlink-helm-chart/interlink-0.6.1.tgz
+    - https://github.com/interlink-hq/interlink-helm-chart/releases/download/interlink-0.6.1/interlink-0.6.1.tgz
     version: 0.6.1
   - apiVersion: v2
     appVersion: 0.6.0
@@ -91,4 +91,4 @@ entries:
     urls:
     - https://github.com/interTwin-eu/interlink-helm-chart/releases/download/interlink-0.1.0/interlink-0.1.0.tgz
     version: 0.1.0
-generated: "2026-04-09T09:30:03.909680443+02:00"
+generated: "2026-04-09T07:32:54.748706057Z"
