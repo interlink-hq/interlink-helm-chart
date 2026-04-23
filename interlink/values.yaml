@@ -126,6 +126,18 @@ virtualNode:
     customTemplate: ""
     wstunnelCommand: |
       curl -L https://github.com/erebe/wstunnel/releases/download/v10.4.4/wstunnel_10.4.4_linux_amd64.tar.gz -o wstunnel.tar.gz && tar -xzvf wstunnel.tar.gz && chmod +x wstunnel && ./wstunnel client --http-upgrade-path-prefix %s %s ws://%s:80 &
+    # WireGuard full mesh network options
+    fullMesh: false
+    serviceCIDR: ""
+    podCIDRCluster: ""
+    dnsServiceIP: ""
+    wireguardGoURL: ""
+    wgToolURL: ""
+    slirp4netnsURL: ""
+    unshareMode: ""
+    meshScriptTemplatePath: ""
+    # Backward-compatible alias for dnsServiceIP
+    dnsService: ""
 
 plugin:
   enabled: false

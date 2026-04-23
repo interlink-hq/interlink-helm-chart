@@ -79,9 +79,10 @@ data:
       FullMesh: {{ .Values.virtualNode.network.fullMesh }}
       ServiceCIDR: {{ .Values.virtualNode.network.serviceCIDR | quote }}
       PodCIDRCluster: {{ .Values.virtualNode.network.podCIDRCluster | quote }}
-      DNSService: {{ .Values.virtualNode.network.dnsService | quote }}
+      DNSServiceIP: {{ coalesce .Values.virtualNode.network.dnsServiceIP .Values.virtualNode.network.dnsService | quote }}
       WireguardGoURL: {{ .Values.virtualNode.network.wireguardGoURL | quote }}
       WgToolURL: {{ .Values.virtualNode.network.wgToolURL | quote }}
+      Slirp4netnsURL: {{ .Values.virtualNode.network.slirp4netnsURL | quote }}
       UnshareMode: {{ .Values.virtualNode.network.unshareMode | quote }}
       MeshScriptTemplatePath: {{ .Values.virtualNode.network.meshScriptTemplatePath | quote }}
       {{- end }}
