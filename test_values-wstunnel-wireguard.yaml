@@ -74,11 +74,13 @@ virtualNode:
     # serviceCIDR: "10.105.0.0/16"
     # #podCIDRCluster is the CIDR range used by the Kubernetes cluster for pods
     # podCIDRCluster: "10.244.0.0/16"  # CIDR dei pod del cluster principale
-    # #dnsService is the IP address of the DNS server to be used inside the WireGuard network
-    # dnsService: "10.244.0.99"  # IP del servizio kube-dns
+    # #dnsServiceIP is the IP address of the DNS server to be used inside the WireGuard network
+    # dnsServiceIP: "10.244.0.99"  # IP del servizio kube-dns
     # #wireguardGoURL and wgToolURL specify where to download wireguard-go and wireguard-tools
     # wireguardGoURL: "https://minio.131.154.98.45.myip.cloud.infn.it/public-data/wireguard-go"
     # wgToolURL: "https://git.zx2c4.com/wireguard-tools/snapshot/wireguard-tools-1.0.20210914.tar.xz"
+    # #slirp4netnsURL specifies where to download slirp4netns
+    # slirp4netnsURL: "https://github.com/interlink-hq/interlink-artifacts/raw/main/slirp4netns/v1.2.3/linux-amd64/slirp4netns"
     # #unshareMode specifies the unshare mode on host system
     # unshareMode: "none"
 
