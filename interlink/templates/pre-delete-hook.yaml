@@ -1,4 +1,44 @@
 ---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{.Values.nodeName}}-cleanup
+  namespace: {{.Release.Namespace}}
+  annotations:
+    "helm.sh/hook": pre-delete
+    "helm.sh/hook-weight": "-10"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded,hook-failed
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{.Values.nodeName}}-cleanup-role
+  annotations:
+    "helm.sh/hook": pre-delete
+    "helm.sh/hook-weight": "-10"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded,hook-failed
+rules:
+  - apiGroups: [""]
+    resources: ["nodes"]
+    verbs: ["get", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{.Values.nodeName}}-cleanup-rolebinding
+  annotations:
+    "helm.sh/hook": pre-delete
+    "helm.sh/hook-weight": "-10"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded,hook-failed
+subjects:
+  - kind: ServiceAccount
+    name: {{.Values.nodeName}}-cleanup
+    namespace: {{.Release.Namespace}}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{.Values.nodeName}}-cleanup-role
+---
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -7,7 +47,7 @@ metadata:
   annotations:
     "helm.sh/hook": pre-delete
     "helm.sh/hook-weight": "-5"
-    "helm.sh/hook-delete-policy": hook-succeeded,hook-failed
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded,hook-failed
   labels:
     app: {{.Values.nodeName}}
     app.kubernetes.io/managed-by: {{.Release.Service}}
@@ -19,7 +59,7 @@ spec:
       labels:
         app: {{.Values.nodeName}}
     spec:
-      serviceAccountName: {{.Values.nodeName}}
+      serviceAccountName: {{.Values.nodeName}}-cleanup
       restartPolicy: OnFailure
       containers:
       - name: node-cleanup
