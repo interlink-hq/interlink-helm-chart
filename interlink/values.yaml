@@ -118,6 +118,10 @@ virtualNode:
     tunnelImage: "ghcr.io/erebe/wstunnel:latest"
     # DNS domain for ingress (e.g., "example.com")
     wildcardDNS: ""
+    # Enable TLS for ingress (requires wildcardDNS)
+    ingressTLS: false
+    # ClusterIssuer for TLS certificate (optional, requires ingressTLS)
+    ingressClusterIssuer: ""
     # Path where wstunnel template will be mounted in VK container
     wstunnelTemplatePath: "/etc/templates/wstunnel.yaml"
     # Template type: "nginx" (default) or "traefik"

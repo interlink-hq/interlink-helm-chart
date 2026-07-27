@@ -73,6 +73,8 @@ data:
       EnableTunnel: {{.Values.virtualNode.network.enableTunnel | default false}}
       TunnelImage: {{.Values.virtualNode.network.tunnelImage | default "ghcr.io/erebe/wstunnel:latest" | quote}}
       WildcardDNS: {{.Values.virtualNode.network.wildcardDNS | default "" | quote}}
+      IngressTLS: {{.Values.virtualNode.network.ingressTLS | default false}}
+      IngressClusterIssuer: {{.Values.virtualNode.network.ingressClusterIssuer | default "" | quote}}
       WstunnelTemplatePath: {{.Values.virtualNode.network.wstunnelTemplatePath | default "/etc/templates/wstunnel.yaml" | quote}}
       WstunnelCommand: {{ .Values.virtualNode.network.wstunnelCommand | quote }}
       {{- if .Values.virtualNode.network.fullMesh }}
