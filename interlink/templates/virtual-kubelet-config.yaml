@@ -75,8 +75,57 @@ data:
       WildcardDNS: {{.Values.virtualNode.network.wildcardDNS | default "" | quote}}{{- if and (.Values.virtualNode.network.ingressTLS | default false) (eq (.Values.virtualNode.network.wildcardDNS | default "") "") }}{{ fail "virtualNode.network.wildcardDNS is required when virtualNode.network.ingressTLS is enabled" }}{{- end }}
       IngressTLS: {{.Values.virtualNode.network.ingressTLS | default false}}
       IngressClusterIssuer: {{.Values.virtualNode.network.ingressClusterIssuer | default "" | quote}}
+      {{- if include "interlink.useWstunnelTemplateFile" . }}
       WstunnelTemplatePath: {{.Values.virtualNode.network.wstunnelTemplatePath | default "/etc/templates/wstunnel.yaml" | quote}}
+      {{- end }}
       WstunnelCommand: {{ .Values.virtualNode.network.wstunnelCommand | quote }}
+      {{- if .Values.virtualNode.network.shadowMode }}
+      ShadowMode: {{ .Values.virtualNode.network.shadowMode | quote }}
+      {{- end }}
+      {{- if eq (.Values.virtualNode.network.shadowMode | default "") "ssh" }}
+      {{- $ssh := .Values.virtualNode.network.ssh }}
+      SSH:
+        LoginHost: {{ required "virtualNode.network.ssh.loginHost is required when shadowMode is ssh" $ssh.loginHost | quote }}
+        User: {{ required "virtualNode.network.ssh.user is required when shadowMode is ssh" $ssh.user | quote }}
+        Port: {{ $ssh.port | default 22 }}
+        ReplicateCredentials: {{ $ssh.replicateCredentials | default true }}
+        {{- with $ssh.image }}
+        Image: {{ . | quote }}
+        {{- end }}
+        {{- with $ssh.auth }}
+        Auth: {{ . | quote }}
+        {{- end }}
+        {{- with $ssh.keySecret }}
+        KeySecret: {{ . | quote }}
+        {{- end }}
+        {{- with $ssh.keySecretKey }}
+        KeySecretKey: {{ . | quote }}
+        {{- end }}
+        {{- with $ssh.keytabSecret }}
+        KeytabSecret: {{ . | quote }}
+        {{- end }}
+        {{- with $ssh.keytabSecretKey }}
+        KeytabSecretKey: {{ . | quote }}
+        {{- end }}
+        {{- with $ssh.principal }}
+        Principal: {{ . | quote }}
+        {{- end }}
+        {{- with $ssh.krb5ConfigMap }}
+        Krb5ConfigMap: {{ . | quote }}
+        {{- end }}
+        {{- with $ssh.knownHostsConfigMap }}
+        KnownHostsConfigMap: {{ . | quote }}
+        {{- end }}
+        {{- with $ssh.nodeWaitTimeout }}
+        NodeWaitTimeout: {{ . | quote }}
+        {{- end }}
+        {{- with $ssh.extraOptions }}
+        ExtraOptions:
+          {{- range . }}
+          - {{ . | quote }}
+          {{- end }}
+        {{- end }}
+      {{- end }}
       {{- if .Values.virtualNode.network.fullMesh }}
       FullMesh: {{ .Values.virtualNode.network.fullMesh }}
       ServiceCIDR: {{ .Values.virtualNode.network.serviceCIDR | quote }}
@@ -134,7 +183,7 @@ data:
     {{- end }}
 {{- end }}
 ---
-{{- if .Values.virtualNode.network.enableTunnel }}
+{{- if include "interlink.useWstunnelTemplateFile" . }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
