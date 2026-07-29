@@ -142,6 +142,46 @@ virtualNode:
     meshScriptTemplatePath: ""
     # Backward-compatible alias for dnsServiceIP
     dnsService: ""
+    # Which shadow pod is rendered for offloaded pods with exposed ports:
+    # "wstunnel" (default) or "ssh". With "ssh" the shadow dials in to an HPC login
+    # node and forwards each port from the compute node the job landed on, so no
+    # compute node needs outbound internet access and no public ingress is required.
+    # It replaces wstunnel, not fullMesh, and cannot be combined with it.
+    shadowMode: ""
+    # SSH port-forward shadow settings, used when shadowMode is "ssh"
+    ssh:
+      # Login node to forward through, and the login name on it (both required)
+      loginHost: ""
+      user: ""
+      port: 22
+      # Image running in the shadow. It needs an ssh client, plus kinit when auth is
+      # "kerberos". Defaults to interLink's ssh-tunnel image for this VK version.
+      image: ""
+      # "publickey" (default) or "kerberos"
+      auth: ""
+      # publickey: Secret holding the private key, and the key inside it
+      keySecret: ""
+      keySecretKey: ""
+      # kerberos: Secret holding the keytab, the key inside it, and the principal
+      keytabSecret: ""
+      keytabSecretKey: ""
+      principal: ""
+      # Optional ConfigMap holding a krb5.conf, mounted at /etc/krb5.conf
+      krb5ConfigMap: ""
+      # Optional ConfigMap holding a known_hosts file. Without it the shadow falls
+      # back to StrictHostKeyChecking=accept-new, which trusts whatever key the login
+      # node presents on first contact.
+      knownHostsConfigMap: ""
+      # Copy the credential into the shadow's namespace, so offloaded pods in
+      # per-user namespaces work without seeding it everywhere by hand. This grants
+      # the virtual kubelet create/update on Secrets cluster-wide, and makes the
+      # credential readable by anyone who can read Secrets in those namespaces.
+      replicateCredentials: true
+      # How long the shadow waits for the plugin to report the compute node before
+      # failing. Queue waits are normal, so this is generous (default 2h).
+      nodeWaitTimeout: ""
+      # Extra ssh client options, each passed as -o <option>
+      extraOptions: []
 
 plugin:
   enabled: false
