@@ -159,6 +159,14 @@ virtualNode:
       image: ""
       # "publickey" (default) or "kerberos"
       auth: ""
+      # How traffic reaches the compute node: "portforward" (default, ssh -L) needs
+      # AllowTcpForwarding on the login node; "exec" relays every connection through
+      # execConnectCommand run there, and needs no forwarding privilege.
+      forwardMode: ""
+      # Command run on the login node in "exec" mode, as <command> <node> <port>.
+      # Defaults to "nc"; use "ncat" or "nc -q 1" on a netcat that does not
+      # propagate a half-close.
+      execConnectCommand: ""
       # publickey: Secret holding the private key, and the key inside it
       keySecret: ""
       keySecretKey: ""

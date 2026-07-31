@@ -95,6 +95,12 @@ data:
         {{- with $ssh.auth }}
         Auth: {{ . | quote }}
         {{- end }}
+        {{- with $ssh.forwardMode }}
+        ForwardMode: {{ . | quote }}
+        {{- end }}
+        {{- with $ssh.execConnectCommand }}
+        ExecConnectCommand: {{ . | quote }}
+        {{- end }}
         {{- with $ssh.keySecret }}
         KeySecret: {{ . | quote }}
         {{- end }}
