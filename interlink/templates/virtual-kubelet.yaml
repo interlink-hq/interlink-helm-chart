@@ -141,7 +141,7 @@ spec:
           mountPath: /etc/vk/certs
           readOnly: true
         {{- end }}
-        {{- if .Values.virtualNode.network.enableTunnel }}
+        {{- if include "interlink.useWstunnelTemplateFile" . }}
         - name: wstunnel-template
           mountPath: {{.Values.virtualNode.network.wstunnelTemplatePath | default "/etc/templates/wstunnel.yaml"}}
           subPath: wstunnel.yaml
@@ -263,7 +263,7 @@ spec:
           secretName: {{.Values.nodeName}}-tls-certs
           optional: true
       {{- end }}
-      {{- if .Values.virtualNode.network.enableTunnel }}
+      {{- if include "interlink.useWstunnelTemplateFile" . }}
       - name: wstunnel-template
         configMap:
           name: {{.Values.nodeName}}-wstunnel-template

@@ -97,3 +97,17 @@ resources:
 {{- end }}
 {{- end }}
 
+{{/*
+Whether the wstunnel shadow template ConfigMap should be rendered and mounted.
+
+The virtual kubelet prefers a template file over its built-in ones, so mounting the
+wstunnel template while shadowMode is "ssh" would silently override the SSH shadow.
+An explicit customTemplate is always honoured, whichever mode is in use.
+*/}}
+{{- define "interlink.useWstunnelTemplateFile" -}}
+{{- if .Values.virtualNode.network.enableTunnel -}}
+{{- if or .Values.virtualNode.network.customTemplate (ne (.Values.virtualNode.network.shadowMode | default "") "ssh") -}}
+true
+{{- end -}}
+{{- end -}}
+{{- end }}

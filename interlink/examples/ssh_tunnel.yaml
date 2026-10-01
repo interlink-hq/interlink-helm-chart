@@ -1,0 +1,43 @@
+# In-cluster deployment reaching an air-gapped HPC site over SSH.
+#
+# The shadow pod dials in to the login node and forwards each exposed port from
+# the compute node the job landed on, so nothing on the HPC side needs outbound
+# internet access and the cluster needs no public ingress.
+#
+# Before installing, create the credential in the release namespace:
+#   kubectl create secret generic hpc-ssh-key -n interlink \
+#     --from-file=id_ed25519=/path/to/private_key
+#
+# For Kerberos sites, use a keytab instead:
+#   kubectl create secret generic hpc-keytab -n interlink \
+#     --from-file=user.keytab=/path/to/user.keytab
+# and set auth: kerberos, keytabSecret, principal (plus krb5ConfigMap if the
+# image's /etc/krb5.conf does not already describe your realm).
+
+nodeName: hpc-vk
+
+interlink:
+  enabled: true
+  address: "http://127.0.0.2"
+  port: 3000
+  exportPodData: true
+  dataRootVolume: "interlink-data"
+
+virtualNode:
+  network:
+    # Both are needed: enableTunnel turns on shadow pods for offloaded pods with
+    # exposed ports, shadowMode picks the ssh implementation over wstunnel.
+    enableTunnel: true
+    shadowMode: ssh
+    ssh:
+      loginHost: login.hpc.example.org
+      user: alice
+      keySecret: hpc-ssh-key
+      # Recommended: pin the login node's host key instead of trusting it on
+      # first contact. Populate from `ssh-keyscan login.hpc.example.org`.
+      # knownHostsConfigMap: hpc-known-hosts
+
+plugin:
+  enabled: true
+  address: "http://127.0.0.2"
+  port: 4000
