@@ -278,6 +278,9 @@ extraVolumes: []
 # Extra containers added to the virtual node pod, next to the plugin. For
 # example, in-cluster mode via ssh needs a sidecar that mounts the HPC job
 # directory into the pod (sshfs), and with Kerberos one that renews the ticket.
+# Names must not repeat those of the chart's containers (vk, plugin, interlink,
+# ...); rendering fails if they do. To replace plugin or interlink, disable it
+# and add your own container under that name.
 extraContainers: []
   # - name: sshfs
   #   image: registry.example.org/sshfs-sidecar:latest

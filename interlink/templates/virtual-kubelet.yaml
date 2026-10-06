@@ -26,6 +26,19 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- /* Container names must be unique in the pod: fail here instead of at the API server. */}}
+      {{- $builtin := list "vk" }}
+      {{- if .Values.plugin.enabled }}{{ $builtin = append $builtin "plugin" }}{{ end }}
+      {{- if .Values.interlink.enabled }}{{ $builtin = append $builtin "interlink" }}{{ end }}
+      {{- if .Values.OAUTH.enabled }}{{ $builtin = append $builtin "refresh-token" }}{{ end }}
+      {{- if .Values.sshBastion.enabled }}{{ $builtin = append $builtin "ssh-bastion" }}{{ end }}
+      {{- $names := $builtin }}
+      {{- range concat (.Values.extraInitContainers | default list) (.Values.extraContainers | default list) }}
+      {{- if has .name $names }}
+      {{- fail (printf "container name %q is used twice in the virtual node pod (the chart's own containers are %s; plugin and interlink can be disabled to replace them)" .name (join ", " $builtin)) }}
+      {{- end }}
+      {{- $names = append $names .name }}
+      {{- end }}
       {{- with .Values.extraInitContainers }}
       initContainers:
         {{- toYaml . | nindent 8 }}
