@@ -275,6 +275,32 @@ extraVolumes: []
   #     path: /scratch/interlink/
   #     type: DirectoryOrCreate
 
+# Extra containers added to the virtual node pod, next to the plugin. For
+# example, in-cluster mode via ssh needs a sidecar that mounts the HPC job
+# directory into the pod (sshfs), and with Kerberos one that renews the ticket.
+# Names must not repeat those of the chart's containers (vk, plugin, interlink,
+# ...); rendering fails if they do. To replace plugin or interlink, disable it
+# and add your own container under that name.
+extraContainers: []
+  # - name: sshfs
+  #   image: registry.example.org/sshfs-sidecar:latest
+  #   securityContext:
+  #     privileged: true
+  #   volumeMounts:
+  #     - name: data-root
+  #       mountPath: /scratch/interlink/jobs
+  #       mountPropagation: Bidirectional
+
+# Init containers for the virtual node pod, e.g. to install helper binaries
+# into a volume the plugin mounts.
+extraInitContainers: []
+  # - name: install-tools
+  #   image: registry.example.org/tools:latest
+  #   command: ["cp", "/tools/bin/helper", "/opt/tools/"]
+  #   volumeMounts:
+  #     - name: tools
+  #       mountPath: /opt/tools
+
 # Pod scheduling configuration
 podScheduling:
   # Node selector for the interlink pod
