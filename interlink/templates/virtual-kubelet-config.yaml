@@ -131,6 +131,21 @@ data:
           - {{ . | quote }}
           {{- end }}
         {{- end }}
+        {{- with $ssh.reverse }}
+        {{- if .enabled }}
+        Reverse:
+          Enabled: true
+          {{- with .nodeExec }}
+          NodeExec: {{ . | quote }}
+          {{- end }}
+          {{- with .sshdPath }}
+          SshdPath: {{ . | quote }}
+          {{- end }}
+          {{- with .pythonPath }}
+          PythonPath: {{ . | quote }}
+          {{- end }}
+        {{- end }}
+        {{- end }}
       {{- end }}
       {{- if .Values.virtualNode.network.fullMesh }}
       FullMesh: {{ .Values.virtualNode.network.fullMesh }}

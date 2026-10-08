@@ -36,6 +36,10 @@ virtualNode:
       # Recommended: pin the login node's host key instead of trusting it on
       # first contact. Populate from `ssh-keyscan login.hpc.example.org`.
       # knownHostsConfigMap: hpc-known-hosts
+      # Optional: let a pod reach Services inside the cluster from the job, see
+      # "Pod to cluster: the reverse tunnel" in the SSH tunnel guide.
+      # reverse:
+      #   enabled: true
 
 plugin:
   enabled: true
