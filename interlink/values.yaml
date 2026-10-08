@@ -190,6 +190,18 @@ virtualNode:
       nodeWaitTimeout: ""
       # Extra ssh client options, each passed as -o <option>
       extraOptions: []
+      # Let offloaded pods open connections back into the cluster through the same
+      # login node, asked for per pod with interlink.eu/reverse-forwards. The shadow
+      # then starts a user-space sshd on the compute node, as the job's user.
+      reverse:
+        enabled: false
+        # How the shadow runs a command on the compute node from the login node:
+        # "ssh" (default, ssh <node> where the user has a running job) or "srun"
+        # (srun --jobid --overlap, needs nothing beyond Slurm)
+        nodeExec: ""
+        # sshd and python3 on the compute node (defaults /usr/sbin/sshd and python3)
+        sshdPath: ""
+        pythonPath: ""
 
 plugin:
   enabled: false
