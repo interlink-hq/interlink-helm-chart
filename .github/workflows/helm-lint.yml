@@ -34,6 +34,25 @@ jobs:
           # Render templates and validate
           helm template virtual-node ./interlink --values ./interlink/values.yaml | kubeval --ignore-missing-schemas
 
+      - name: Render the SSH shadow settings
+        run: |
+          # The default values never render shadowMode "ssh"; check its settings here.
+          example=./interlink/examples/ssh_tunnel.yaml
+          secret_writes() { awk '/- secrets$/{s=1} s&&/- apiGroups:/{exit} s' | grep -qE -- '- (create|update|patch)$'; }
+
+          on=$(helm template virtual-node ./interlink --values "$example")
+          for want in 'ReplicateCredentials: true'; do
+            grep -qF "$want" <<<"$on" || { echo "not rendered: $want"; exit 1; }
+          done
+          secret_writes <<<"$on" || { echo "no Secret write access with replicateCredentials on"; exit 1; }
+
+          off=$(helm template virtual-node ./interlink --values "$example" \
+            --set virtualNode.network.ssh.replicateCredentials=false)
+          grep -qF 'ReplicateCredentials: false' <<<"$off" || { echo "replicateCredentials=false not rendered"; exit 1; }
+          if secret_writes <<<"$off"; then
+            echo "Secret write access granted with replicateCredentials=false"; exit 1
+          fi
+
       - name: Install chart-testing
         uses: helm/chart-testing-action@v2.8.0
 
