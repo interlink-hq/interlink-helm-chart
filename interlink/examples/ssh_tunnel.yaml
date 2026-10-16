@@ -43,6 +43,10 @@ virtualNode:
       # and the login node's /etc/ssh/ssh_known_hosts.
       # forwardTarget: node
       # nodeHostKeys: verify
+      # Optional: let a pod reach Services inside the cluster from the job, see
+      # "Pod to cluster: the reverse tunnel" in the SSH tunnel guide.
+      # reverse:
+      #   enabled: true
 
 plugin:
   enabled: true
