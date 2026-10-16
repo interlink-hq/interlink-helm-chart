@@ -52,11 +52,11 @@ plugin:
   enabled: true
   address: "http://127.0.0.2"
   port: 4000
-  # Unix socket ports (pod annotation interlink.eu/shadow-socket-ports) need a
-  # per-pod directory on the compute node. Add SocketDirRoot to the plugin's
-  # config: a directory on a filesystem that ssh sessions on the node also see
-  # (never node-local /tmp), owned by the account, mode 0700. It must be an
-  # absolute path of letters, digits, '.', '_' and '-', no element starting
-  # with a dot, at most 79 bytes.
+  # Unix socket ports (pod annotation interlink.eu/shadow-socket-ports) and the
+  # reverse tunnel need a per-pod directory on the compute node. Add
+  # SocketDirRoot to the plugin's config: a directory on a filesystem that ssh
+  # sessions on the node also see (never node-local /tmp), owned by the account,
+  # mode 0700. It must be an absolute path of letters, digits, '.', '_' and '-',
+  # no element starting with a dot, at most 79 bytes.
   # config: |
   #   SocketDirRoot: /home/alice/interlink/sockets
