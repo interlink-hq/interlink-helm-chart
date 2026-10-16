@@ -42,11 +42,36 @@ jobs:
 
           on=$(helm template virtual-node ./interlink --values "$example" \
             --set virtualNode.network.ssh.forwardTarget=node \
-            --set virtualNode.network.ssh.nodeHostKeys=verify)
-          for want in 'ReplicateCredentials: true' 'ForwardTarget: "node"' 'NodeHostKeys: "verify"'; do
+            --set virtualNode.network.ssh.nodeHostKeys=verify \
+            --set virtualNode.network.ssh.reverse.enabled=true \
+            --set virtualNode.network.ssh.reverse.sshd=userspace \
+            --set virtualNode.network.ssh.reverse.allowSocks=true)
+          for want in 'ReplicateCredentials: true' 'ForwardTarget: "node"' 'NodeHostKeys: "verify"' \
+            'Sshd: "userspace"' 'AllowSocks: true'; do
             grep -qF "$want" <<<"$on" || { echo "not rendered: $want"; exit 1; }
           done
           secret_writes <<<"$on" || { echo "no Secret write access with replicateCredentials on"; exit 1; }
+
+          # The reverse tunnel and its SOCKS proxy are opt-in: the default allowSocks
+          # and a quoted "false" for either must leave them off.
+          rev=$(helm template virtual-node ./interlink --values "$example" \
+            --set virtualNode.network.ssh.reverse.enabled=true)
+          grep -qF 'Reverse:' <<<"$rev" || { echo "reverse.enabled=true not rendered"; exit 1; }
+          if grep -qF 'AllowSocks' <<<"$rev"; then
+            echo "AllowSocks rendered with the default allowSocks"; exit 1
+          fi
+          rev=$(helm template virtual-node ./interlink --values "$example" \
+            --set virtualNode.network.ssh.reverse.enabled=true \
+            --set-string virtualNode.network.ssh.reverse.allowSocks=false)
+          grep -qF 'Reverse:' <<<"$rev" || { echo "reverse.enabled=true not rendered"; exit 1; }
+          if grep -qF 'AllowSocks' <<<"$rev"; then
+            echo "AllowSocks rendered with allowSocks \"false\""; exit 1
+          fi
+          rev=$(helm template virtual-node ./interlink --values "$example" \
+            --set-string virtualNode.network.ssh.reverse.enabled=false)
+          if grep -qF 'Reverse:' <<<"$rev"; then
+            echo "Reverse rendered with reverse.enabled \"false\""; exit 1
+          fi
 
           off=$(helm template virtual-node ./interlink --values "$example" \
             --set virtualNode.network.ssh.replicateCredentials=false)

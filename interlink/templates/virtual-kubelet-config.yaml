@@ -138,9 +138,12 @@ data:
           {{- end }}
         {{- end }}
         {{- with $ssh.reverse }}
-        {{- if .enabled }}
+        {{- if eq (toString .enabled) "true" }}
         Reverse:
           Enabled: true
+          {{- with .sshd }}
+          Sshd: {{ . | quote }}
+          {{- end }}
           {{- with .nodeExec }}
           NodeExec: {{ . | quote }}
           {{- end }}
@@ -149,6 +152,9 @@ data:
           {{- end }}
           {{- with .pythonPath }}
           PythonPath: {{ . | quote }}
+          {{- end }}
+          {{- if eq (toString .allowSocks) "true" }}
+          AllowSocks: true
           {{- end }}
         {{- end }}
         {{- end }}
