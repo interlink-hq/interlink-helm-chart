@@ -40,8 +40,10 @@ jobs:
           example=./interlink/examples/ssh_tunnel.yaml
           secret_writes() { awk '/- secrets$/{s=1} s&&/- apiGroups:/{exit} s' | grep -qE -- '- (create|update|patch)$'; }
 
-          on=$(helm template virtual-node ./interlink --values "$example")
-          for want in 'ReplicateCredentials: true'; do
+          on=$(helm template virtual-node ./interlink --values "$example" \
+            --set virtualNode.network.ssh.forwardTarget=node \
+            --set virtualNode.network.ssh.nodeHostKeys=verify)
+          for want in 'ReplicateCredentials: true' 'ForwardTarget: "node"' 'NodeHostKeys: "verify"'; do
             grep -qF "$want" <<<"$on" || { echo "not rendered: $want"; exit 1; }
           done
           secret_writes <<<"$on" || { echo "no Secret write access with replicateCredentials on"; exit 1; }
