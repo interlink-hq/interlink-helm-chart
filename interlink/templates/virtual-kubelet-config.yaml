@@ -137,6 +137,27 @@ data:
           - {{ . | quote }}
           {{- end }}
         {{- end }}
+        {{- with $ssh.reverse }}
+        {{- if eq (toString .enabled) "true" }}
+        Reverse:
+          Enabled: true
+          {{- with .sshd }}
+          Sshd: {{ . | quote }}
+          {{- end }}
+          {{- with .nodeExec }}
+          NodeExec: {{ . | quote }}
+          {{- end }}
+          {{- with .sshdPath }}
+          SshdPath: {{ . | quote }}
+          {{- end }}
+          {{- with .pythonPath }}
+          PythonPath: {{ . | quote }}
+          {{- end }}
+          {{- if eq (toString .allowSocks) "true" }}
+          AllowSocks: true
+          {{- end }}
+        {{- end }}
+        {{- end }}
       {{- end }}
       {{- if .Values.virtualNode.network.fullMesh }}
       FullMesh: {{ .Values.virtualNode.network.fullMesh }}
