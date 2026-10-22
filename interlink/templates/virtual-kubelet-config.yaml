@@ -88,7 +88,7 @@ data:
         LoginHost: {{ required "virtualNode.network.ssh.loginHost is required when shadowMode is ssh" $ssh.loginHost | quote }}
         User: {{ required "virtualNode.network.ssh.user is required when shadowMode is ssh" $ssh.user | quote }}
         Port: {{ $ssh.port | default 22 }}
-        ReplicateCredentials: {{ $ssh.replicateCredentials | default true }}
+        ReplicateCredentials: {{ ne (toString $ssh.replicateCredentials) "false" }}
         {{- with $ssh.image }}
         Image: {{ . | quote }}
         {{- end }}
@@ -97,6 +97,9 @@ data:
         {{- end }}
         {{- with $ssh.forwardMode }}
         ForwardMode: {{ . | quote }}
+        {{- end }}
+        {{- with $ssh.forwardTarget }}
+        ForwardTarget: {{ . | quote }}
         {{- end }}
         {{- with $ssh.execConnectCommand }}
         ExecConnectCommand: {{ . | quote }}
@@ -121,6 +124,9 @@ data:
         {{- end }}
         {{- with $ssh.knownHostsConfigMap }}
         KnownHostsConfigMap: {{ . | quote }}
+        {{- end }}
+        {{- with $ssh.nodeHostKeys }}
+        NodeHostKeys: {{ . | quote }}
         {{- end }}
         {{- with $ssh.nodeWaitTimeout }}
         NodeWaitTimeout: {{ . | quote }}

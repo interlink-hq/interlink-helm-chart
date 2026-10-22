@@ -159,15 +159,29 @@ virtualNode:
       image: ""
       # "publickey" (default) or "kerberos"
       auth: ""
-      # How traffic reaches the compute node: "portforward" (default, ssh -L) needs
-      # AllowTcpForwarding on the login node; "exec" relays every connection through
-      # execConnectCommand run there, and needs no forwarding privilege.
+      # Where the ssh session ends, and so who connects to each exposed port.
+      # "login" (default): the login node connects to <node>:<port>, so the workload
+      # must listen on the compute node's network address. "node": the session goes
+      # through the login node to the compute node's own sshd, which connects to
+      # 127.0.0.1:<port>, or to a unix socket for the ports listed in the pod's
+      # interlink.eu/shadow-socket-ports annotation (needs SocketDirRoot in the
+      # plugin). The workload then never listens on the network, and the compute
+      # node's host key is checked as nodeHostKeys says.
+      forwardTarget: ""
+      # What the login node is asked to do: "portforward" (default) uses its sshd
+      # forwarding (ssh -L to the node's address, or ssh -W to the node's sshd with
+      # forwardTarget "node") and needs AllowTcpForwarding there; "exec" runs
+      # execConnectCommand instead and needs no forwarding privilege on the login
+      # node. With forwardTarget "node" the forwards are always ssh -L on the
+      # compute node's sshd.
       forwardMode: ""
-      # Command run on the login node in "exec" mode, as <command> <node> <port>.
-      # Defaults to "nc"; use "ncat" or "nc -q 1" on a netcat that does not
-      # propagate a half-close.
+      # Command run on the login node in "exec" mode: <command> <node> <port>, or
+      # <command> <node> 22 with forwardTarget "node". Defaults to "nc"; use "ncat"
+      # or "nc -q 1" on a netcat that does not propagate a half-close.
       execConnectCommand: ""
-      # publickey: Secret holding the private key, and the key inside it
+      # publickey: Secret holding the private key, and the key inside it. This is the
+      # shadow's own key: a dedicated, restricted key (see the SSH tunnel guide),
+      # never the plugin's, as it ends up in every shadow's namespace.
       keySecret: ""
       keySecretKey: ""
       # kerberos: Secret holding the keytab, the key inside it, and the principal
@@ -176,10 +190,18 @@ virtualNode:
       principal: ""
       # Optional ConfigMap holding a krb5.conf, mounted at /etc/krb5.conf
       krb5ConfigMap: ""
-      # Optional ConfigMap holding a known_hosts file. Without it the shadow falls
-      # back to StrictHostKeyChecking=accept-new, which trusts whatever key the login
-      # node presents on first contact.
+      # Optional ConfigMap holding a known_hosts file: the login node's key, plus,
+      # for sessions on compute nodes, their keys, a host pattern such as
+      # "node*.example.org ssh-ed25519 AAAA..." or an "@cert-authority" line. Without
+      # it the shadow falls back to StrictHostKeyChecking=accept-new, which trusts
+      # whatever key the login node presents on first contact.
       knownHostsConfigMap: ""
+      # How compute node host keys are checked, for every session on a compute node:
+      # "verify" (default) accepts only keys from knownHostsConfigMap or from the
+      # login node's /etc/ssh/ssh_known_hosts files, which are trusted only as far
+      # as the login node is, so pin it in knownHostsConfigMap. "accept-new" trusts
+      # whatever key a node presents first, with a warning.
+      nodeHostKeys: ""
       # Copy the credential into the shadow's namespace, so offloaded pods in
       # per-user namespaces work without seeding it everywhere by hand. This grants
       # the virtual kubelet create/update on Secrets cluster-wide, and makes the
@@ -188,7 +210,10 @@ virtualNode:
       # How long the shadow waits for the plugin to report the compute node before
       # failing. Queue waits are normal, so this is generous (default 2h).
       nodeWaitTimeout: ""
-      # Extra ssh client options, each passed as -o <option>
+      # Extra ssh client options, each passed as -o <option> on every hop (login
+      # node and compute node). They come after the fixed options and ssh keeps the
+      # first value it sees, so the fixed options win; the exception is
+      # GSSAPIDelegateCredentials on the login hop, which they can turn back on.
       extraOptions: []
 
 plugin:

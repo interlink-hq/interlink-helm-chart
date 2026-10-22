@@ -34,10 +34,25 @@ virtualNode:
       user: alice
       keySecret: hpc-ssh-key
       # Recommended: pin the login node's host key instead of trusting it on
-      # first contact. Populate from `ssh-keyscan login.hpc.example.org`.
+      # first contact. Populate from `ssh-keyscan login.hpc.example.org`, plus
+      # the compute nodes' keys, a host pattern or an @cert-authority line.
       # knownHostsConfigMap: hpc-known-hosts
+      # Recommended: end the session on the compute node's own sshd, so the
+      # workload listens on 127.0.0.1 or a unix socket, never on the network.
+      # Compute node host keys are then verified against the ConfigMap above
+      # and the login node's /etc/ssh/ssh_known_hosts.
+      # forwardTarget: node
+      # nodeHostKeys: verify
 
 plugin:
   enabled: true
   address: "http://127.0.0.2"
   port: 4000
+  # Unix socket ports (pod annotation interlink.eu/shadow-socket-ports) need a
+  # per-pod directory on the compute node. Add SocketDirRoot to the plugin's
+  # config: a directory on a filesystem that ssh sessions on the node also see
+  # (never node-local /tmp), owned by the account, mode 0700. It must be an
+  # absolute path of letters, digits, '.', '_' and '-', no element starting
+  # with a dot, at most 79 bytes.
+  # config: |
+  #   SocketDirRoot: /home/alice/interlink/sockets
