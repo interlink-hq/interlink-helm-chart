@@ -176,8 +176,10 @@ virtualNode:
       # compute node's sshd.
       forwardMode: ""
       # Command run on the login node in "exec" mode: <command> <node> <port>, or
-      # <command> <node> 22 with forwardTarget "node". Defaults to "nc"; use "ncat"
-      # or "nc -q 1" on a netcat that does not propagate a half-close.
+      # <command> <node> 22 with forwardTarget "node". reverse.nodeExec "srun" with
+      # reverse.sshd "node" also runs <command> 127.0.0.1 22 on the compute node, in
+      # either forwardMode. Defaults to "nc"; use "ncat" or "nc -q 1" on a netcat
+      # that does not propagate a half-close.
       execConnectCommand: ""
       # publickey: Secret holding the private key, and the key inside it. This is the
       # shadow's own key: a dedicated, restricted key (see the SSH tunnel guide),
@@ -215,6 +217,33 @@ virtualNode:
       # first value it sees, so the fixed options win; the exception is
       # GSSAPIDelegateCredentials on the login hop, which they can turn back on.
       extraOptions: []
+      # Let offloaded pods open connections back into the cluster through the same
+      # login node, asked for per pod with interlink.eu/reverse-forwards. Each
+      # forward becomes a unix socket in the pod's socket directory on the compute
+      # node (needs SocketDirRoot in the plugin), and a relay the job starts serves
+      # it on a loopback address to the job's own user only.
+      reverse:
+        enabled: false
+        # Which sshd makes the forwards: "node" (default), the compute node's own
+        # sshd; "userspace", an sshd the shadow starts in the job, for sites whose
+        # node sshd refuses forwarding. "userspace" runs a script the shadow sends,
+        # so it does not work with a command-restricted key.
+        sshd: ""
+        # How the shadow reaches the compute node: "ssh" (default) port 22 through
+        # the login node, as forwardMode says; "srun" (srun --jobid --overlap in the
+        # job's allocation, running execConnectCommand 127.0.0.1 22, or the
+        # user-space sshd itself) is a last resort with lower throughput, and with
+        # auth "kerberos" it delegates the ticket to the login node.
+        nodeExec: ""
+        # sshd on the compute node, for "userspace" only (default /usr/sbin/sshd)
+        sshdPath: ""
+        # python3 on the compute node, which runs the relay (default python3)
+        pythonPath: ""
+        # Let pods ask for a SOCKS proxy with interlink.eu/reverse-socks-port. It
+        # listens on 127.0.0.1 of the compute node, open to every user of that node,
+        # and reaches any endpoint the shadow reaches in the cluster: leave false
+        # where the site forbids proxies. While false, such pods are refused.
+        allowSocks: false
 
 plugin:
   enabled: false
