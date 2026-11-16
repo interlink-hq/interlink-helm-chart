@@ -81,4 +81,12 @@ purpose of changes to the code.
 Main branch is always available. Tagged versions may be created as needed
 following [Semantic Versioning](https://semver.org/) as far as applicable.
 
+### Helm chart changelog
+
+Chart release notes are published on Artifact Hub from the
+`artifacthub.io/changes` annotation in `interlink/Chart.yaml`. Before each
+chart release, update this annotation with the changes included in that
+release. Use one entry per change and a supported kind such as `added`,
+`changed`, `deprecated`, `removed`, `fixed`, or `security`.
+
 **This file has been modified from the Chef Cookbook Contributing Guide**.

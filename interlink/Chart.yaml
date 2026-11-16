@@ -27,3 +27,8 @@ sources:
 maintainers:
   - name: interTwin-eu
     url: https://github.com/interTwin-eu
+
+annotations:
+  artifacthub.io/changes: |
+    - kind: added
+      description: Add SSH-based port forwarding for exposed pod ports without requiring compute nodes to access the internet.
