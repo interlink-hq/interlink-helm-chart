@@ -31,7 +31,7 @@ data:
     {{- end }}
     ExportPodData: {{ .Values.interlink.exportPodData }}
     SkipDownwardAPIResolution: {{ .Values.interlink.skipDownwardAPIResolution | default false }}
-    VerboseLogging:  {{.Values.interlink.logging.verboseLogging | default true}}
+    VerboseLogging:  {{ ne (toString .Values.interlink.logging.verboseLogging) "false" }}
     ErrorsOnlyLogging:  {{.Values.interlink.logging.errorsOnlyLogging | default false}}
     ServiceAccount: "{{ .Values.nodeName }}"
     Namespace: "{{ .Release.Namespace }}"
@@ -194,7 +194,7 @@ data:
     SidecarURL: {{ .Values.plugin.address | quote }}
     SidecarPort: {{ .Values.plugin.port | quote }}
     {{- end }}
-    VerboseLogging: {{.Values.interlink.logging.verboseLogging | default true}}
+    VerboseLogging: {{ ne (toString .Values.interlink.logging.verboseLogging) "false" }}
     ErrorsOnlyLogging: {{.Values.interlink.logging.errorsOnlyLogging | default false}}
     {{- if .Values.interlink.tls.enabled }}
     TLS:
